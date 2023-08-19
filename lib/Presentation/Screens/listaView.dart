@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pantrysmart/Classes/EnumHelper.dart';
+import 'package:pantrysmart/Classes/Enums.dart';
+import 'package:pantrysmart/Classes/Prodotto.dart';
 import 'package:pantrysmart/colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 List<String> list = <String>[
   'Qualsiasi',
@@ -20,9 +24,48 @@ Map<String, IconData> iconsMap = {
 };
 String dropdownValue = list.first;
 
-class ListaView extends StatelessWidget {
-  const ListaView({Key? key, required this.title}) : super(key: key);
-  final String title;
+class ListaView extends StatefulWidget {
+  const ListaView({super.key});
+  @override
+  State<ListaView> createState() => ListaViewState();
+}
+
+class ListaViewState extends State<ListaView> {
+  //final SharedPreferences prefs;
+  List<Prodotto> prodotti = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadprefs();
+  }
+
+  Future<void> _loadprefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    //String encodedData = '';
+    /*List<Prodotto> listaTest = [
+      Prodotto(
+          id:1,
+          denominazione: 'formaggio',
+          tipo: StorageHelper.fromTipo(TipiProdotto.frigo),
+          prezzo: 0.5,
+          quantita: '150g',
+          scadenza: DateTime.now().toString()),
+      Prodotto(
+          id:2,
+          denominazione: 'vino',
+          tipo: StorageHelper.fromTipo(TipiProdotto.bevande),
+          prezzo: 7,
+          quantita: '1L',
+          scadenza: DateTime.now().toString()),
+    ];
+    encodedData = Prodotto.encode(listaTest);
+    await prefs.setString('prodotti_key', encodedData);*/
+    final String? prodottiString = await prefs.getString('prodotti_key');
+    setState(() {
+      prodotti = Prodotto.decode(prodottiString!);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,41 +97,13 @@ class ListaView extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: ListView(
                     scrollDirection: Axis.vertical,
-                    children: <Widget>[
-                      Text("Facebook"),
-                      Padding(padding: new EdgeInsets.all(5.00)),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                      Text("Google"),
-                    ],
+                    children: prodotti.map<Widget>(
+                            (v) => Card(
+                              child: ListTile(
+                                title: Text(v.denominazione!),
+                                subtitle: Text(v.quantita!),
+                              ),
+                            )).toList(),
                   ),
                 )),
             ElevatedButton.icon(
