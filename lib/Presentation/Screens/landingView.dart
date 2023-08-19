@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pantrysmart/LandingViewBloc/landing_view_bloc.dart';
+import 'package:pantrysmart/Presentation/Screens/listaView.dart';
 
 List<BottomNavigationBarItem> bottomNavItems = const [
   BottomNavigationBarItem(
@@ -18,8 +19,8 @@ List<BottomNavigationBarItem> bottomNavItems = const [
 ];
 
 List<Widget> bottomNavScreens = const [
-  Text('Uno'), //prova a rimpiazzare con uno state widget
-  Text('Due'),
+  Text('Uno'),
+  ListaView(title: 'Due'),
   Text('Tre'),
 ];
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pantrysmart/Presentation/Routes/generatedRoutes.dart';
+import 'colors.dart';
 
 void main() {
   runApp(const MyApp());
