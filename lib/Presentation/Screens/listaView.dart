@@ -22,7 +22,11 @@ Map<String, IconData> iconsMap = {
   'Bevande': Icons.local_bar,
   'Altro': Icons.pending,
 };
-String dropdownValue = list.first;
+
+List<Prodotto> prodotti = [];
+List<Prodotto> prodottiFiltratiRicerca = [];
+List<Prodotto> prodottiFiltratiTipo = [];
+List<Prodotto> prodottiFiltratiFinali = [];
 
 class ListaView extends StatefulWidget {
   ListaView({super.key});
@@ -32,7 +36,7 @@ class ListaView extends StatefulWidget {
 
 class ListaViewState extends State<ListaView> {
   //final SharedPreferences prefs;
-  List<Prodotto> prodotti = [];
+  final fieldText = TextEditingController();
 
   @override
   void initState() {
@@ -64,7 +68,18 @@ class ListaViewState extends State<ListaView> {
     final String? prodottiString = await prefs.getString('prodotti_key');
     setState(() {
       prodotti = Prodotto.decode(prodottiString!);
+      prodottiFiltratiRicerca = prodotti;
+      prodottiFiltratiTipo = prodotti;
+      prodottiFiltratiFinali = prodotti;
     });
+  }
+
+  void clearText() {
+    fieldText.clear();
+  }
+
+  void refresh() {
+    setState(() {});
   }
 
 
@@ -75,13 +90,49 @@ class ListaViewState extends State<ListaView> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16,16,32,16),
-              child: TextField(
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                    hintText: 'Ricerca',
-                  )),
+              padding: const EdgeInsets.fromLTRB(16,16,16,16),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0,0,10,0),
+                      child: TextField(
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(),
+                            hintText: 'Ricerca per nome',
+                          ),
+                          onSubmitted: (value) {
+                            setState(() {
+                              prodottiFiltratiRicerca =
+                                  prodotti.where((p) => p.denominazione == value).toList();
+                              prodottiFiltratiFinali =
+                                  prodottiFiltratiRicerca.toSet().where((element) =>
+                                      prodottiFiltratiTipo.toSet().contains(element))
+                                      .toList();
+                            });
+                          },
+                          controller: fieldText),
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      clearText();
+                      setState(() {
+                        prodottiFiltratiRicerca = prodotti;
+                        prodottiFiltratiFinali =
+                            prodottiFiltratiRicerca.toSet().where((element) =>
+                                prodottiFiltratiTipo.toSet().contains(element))
+                                .toList();
+                      });
+                    },
+                    icon: Icon( // <-- Icon
+                      Icons.backspace,
+                    ),
+                    label: Text('Reset'), // <-- Text
+                  ),
+                ],
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +143,7 @@ class ListaViewState extends State<ListaView> {
                   ),),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16,0,0,0),
-                  child: DropdownButtonTipi(),
+                  child: DropdownButtonTipi(notifyParent: refresh),
                 ),
               ],
             ),
@@ -101,7 +152,7 @@ class ListaViewState extends State<ListaView> {
                   padding: const EdgeInsets.all(8.0),
                   child: ListView(
                     scrollDirection: Axis.vertical,
-                    children: prodotti.map<Widget>(
+                    children: prodottiFiltratiFinali.map<Widget>(
                             (v) => Card(
                           child: ListTile(
                             title: Padding(
@@ -209,7 +260,8 @@ class ListaViewState extends State<ListaView> {
 }
 
 class DropdownButtonTipi extends StatefulWidget {
-  const DropdownButtonTipi({super.key});
+  const DropdownButtonTipi({super.key, required this.notifyParent});
+  final Function() notifyParent;
   @override
   State<DropdownButtonTipi> createState() => _DropdownButtonTipiState();
 }
@@ -231,7 +283,21 @@ class _DropdownButtonTipiState extends State<DropdownButtonTipi> {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
+          if(value == 'Qualsiasi'){
+            prodottiFiltratiTipo = prodotti;
+            prodottiFiltratiFinali =
+                prodottiFiltratiTipo.toSet().where((element) =>
+                    prodottiFiltratiRicerca.toSet().contains(element))
+                    .toList();
+          }else{
+            prodottiFiltratiTipo = prodotti.where((p) => p.tipo == value).toList();
+            prodottiFiltratiFinali =
+                prodottiFiltratiTipo.toSet().where((element) =>
+                    prodottiFiltratiRicerca.toSet().contains(element))
+                    .toList();
+          }
         });
+        widget.notifyParent();
       },
       items: list.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
