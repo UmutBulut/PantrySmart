@@ -3,7 +3,7 @@ import 'dart:convert';
 class Prodotto {
   int? id;
   String? denominazione;
-  int? tipo;
+  String? tipo;
   double? prezzo;
   String? quantita;
   String? scadenza;

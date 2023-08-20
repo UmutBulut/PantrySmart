@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pantrysmart/Classes/EnumHelper.dart';
-import 'package:pantrysmart/Classes/Enums.dart';
 import 'package:pantrysmart/Classes/Prodotto.dart';
 import 'package:pantrysmart/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+
 
 List<String> list = <String>[
   'Qualsiasi',
@@ -25,7 +25,7 @@ Map<String, IconData> iconsMap = {
 String dropdownValue = list.first;
 
 class ListaView extends StatefulWidget {
-  const ListaView({super.key});
+  ListaView({super.key});
   @override
   State<ListaView> createState() => ListaViewState();
 }
@@ -42,19 +42,19 @@ class ListaViewState extends State<ListaView> {
 
   Future<void> _loadprefs() async {
     final prefs = await SharedPreferences.getInstance();
-    //String encodedData = '';
-    /*List<Prodotto> listaTest = [
+    /*String encodedData = '';
+    List<Prodotto> listaTest = [
       Prodotto(
           id:1,
-          denominazione: 'formaggio',
-          tipo: StorageHelper.fromTipo(TipiProdotto.frigo),
+          denominazione: 'Formaggio',
+          tipo: 'Frigo/surgelati',
           prezzo: 0.5,
           quantita: '150g',
           scadenza: DateTime.now().toString()),
       Prodotto(
           id:2,
-          denominazione: 'vino',
-          tipo: StorageHelper.fromTipo(TipiProdotto.bevande),
+          denominazione: 'Vino',
+          tipo: 'Bevande',
           prezzo: 7,
           quantita: '1L',
           scadenza: DateTime.now().toString()),
@@ -66,6 +66,7 @@ class ListaViewState extends State<ListaView> {
       prodotti = Prodotto.decode(prodottiString!);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +86,10 @@ class ListaViewState extends State<ListaView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Filtra per tipo:'),
+                Text('Filtra per tipo:',
+                  style: TextStyle(
+                      fontSize: 18
+                  ),),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16,0,0,0),
                   child: DropdownButtonTipi(),
@@ -99,20 +103,103 @@ class ListaViewState extends State<ListaView> {
                     scrollDirection: Axis.vertical,
                     children: prodotti.map<Widget>(
                             (v) => Card(
-                              child: ListTile(
-                                title: Text(v.denominazione!),
-                                subtitle: Text(v.quantita!),
+                          child: ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(iconsMap[v.tipo!],
+                                        size: 25,),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(10,0,0,0),
+                                        child: Text(
+                                          v.denominazione!,
+                                          style: TextStyle(
+                                              fontSize: 25
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    '('+v.prezzo.toString()+'€)',
+                                    style: TextStyle(
+                                      color: CustomColors.primaryContainer,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            )).toList(),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Quantità: '+ v.quantita!,
+                                  style: TextStyle(
+                                      fontSize: 20
+                                  ),
+                                ),
+                                Text('Scadenza: '+ v.scadenza!.substring(0,10),
+                                  style: TextStyle(
+                                      fontSize: 20
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0,10,0,0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        onPressed: () {},
+                                        icon: Icon( // <-- Icon
+                                          Icons.visibility,
+                                          size: 24.0,
+                                        ),
+                                        label: Text('Visualizza immagine'), // <-- Text
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                              onPressed: (){},
+                                              icon: Icon(Icons.edit)),
+                                          IconButton(
+                                              onPressed: (){},
+                                              icon: Icon(Icons.delete)),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        )).toList(),
                   ),
                 )),
-            ElevatedButton.icon(
-              onPressed: () {},
-              icon: Icon( // <-- Icon
-                Icons.add,
-                size: 24.0,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0,0,0,10),
+              child: KeyboardVisibilityBuilder(
+                  builder: (context, isKeyBoardVisible) {
+                    return Visibility(
+                      visible: !isKeyBoardVisible,
+                      child: ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: Icon( // <-- Icon
+                          Icons.add,
+                          size: 30.0,
+                        ),
+                        label: Text('Aggiungi',
+                          style: TextStyle(
+                              fontSize: 25
+                          ),
+                        ), // <-- Text
+                      ),
+                    );
+                  }
               ),
-              label: Text('Aggiungi'), // <-- Text
             ),
           ],
         ),
