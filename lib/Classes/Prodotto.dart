@@ -7,6 +7,7 @@ class Prodotto {
   double? prezzo;
   String? quantita;
   String? scadenza;
+  bool? inRimozione;
 
   Prodotto({
     this.id,
@@ -14,7 +15,8 @@ class Prodotto {
     this.tipo,
     this.prezzo,
     this.quantita,
-    this.scadenza
+    this.scadenza,
+    this.inRimozione
   });
 
   factory Prodotto.fromJson(Map<String, dynamic> jsonData) {
@@ -25,6 +27,7 @@ class Prodotto {
       prezzo: jsonData['prezzo'],
       quantita: jsonData['quantita'],
       scadenza: jsonData['scadenza'],
+      inRimozione: jsonData['inRimozione']
     );
   }
 
@@ -35,6 +38,7 @@ class Prodotto {
     'prezzo': prodotto.prezzo,
     'quantita': prodotto.quantita,
     'scadenza': prodotto.scadenza,
+    'inRimozione': prodotto.inRimozione,
   };
 
   static String encode(List<Prodotto> prodotti) => json.encode(

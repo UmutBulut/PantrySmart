@@ -54,17 +54,20 @@ class ListaViewState extends State<ListaView> {
           tipo: 'Frigo/surgelati',
           prezzo: 0.5,
           quantita: '150g',
-          scadenza: DateTime.now().toString()),
+          scadenza: DateTime.now().toString(),
+          inRimozione: false),
       Prodotto(
           id:2,
           denominazione: 'Vino',
           tipo: 'Bevande',
           prezzo: 7,
           quantita: '1L',
-          scadenza: DateTime.now().toString()),
+          scadenza: DateTime.now().toString(),
+          inRimozione: false),
     ];
     encodedData = Prodotto.encode(listaTest);
     await prefs.setString('prodotti_key', encodedData);*/
+
     final String? prodottiString = await prefs.getString('prodotti_key');
     setState(() {
       prodotti = Prodotto.decode(prodottiString!);
@@ -72,6 +75,13 @@ class ListaViewState extends State<ListaView> {
       prodottiFiltratiTipo = prodotti;
       prodottiFiltratiFinali = prodotti;
     });
+  }
+
+  Future<void> _saveprefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    String encodedData = '';
+    encodedData = Prodotto.encode(prodotti);
+    await prefs.setString('prodotti_key', encodedData);
   }
 
   void clearText() {
@@ -154,7 +164,8 @@ class ListaViewState extends State<ListaView> {
                     scrollDirection: Axis.vertical,
                     children: prodottiFiltratiFinali.map<Widget>(
                             (v) => Card(
-                          child: ListTile(
+                          child: (!v.inRimozione!)?
+                          ListTile(
                             title: Padding(
                               padding: const EdgeInsets.fromLTRB(0,0,0,10),
                               child: Row(
@@ -217,13 +228,58 @@ class ListaViewState extends State<ListaView> {
                                               onPressed: (){},
                                               icon: Icon(Icons.edit)),
                                           IconButton(
-                                              onPressed: (){},
+                                              onPressed: (){
+                                                setState(() {
+                                                  v.inRimozione = true;
+                                                });
+                                              },
                                               icon: Icon(Icons.delete)),
                                         ],
                                       ),
                                     ],
                                   ),
                                 )
+                              ],
+                            ),
+                          ) :
+                          ListTile(
+                            title: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                                  child: Text('Confermi la rimozione dell\'oggetto?',
+                                  style: TextStyle(
+                                      fontSize: 20
+                                  )),
+                                )),
+                            subtitle: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      v.inRimozione = false;
+                                    });
+                                  },
+                                  icon: Icon( // <-- Icon
+                                    Icons.close,
+                                    size: 24.0,
+                                  ),
+                                  label: Text('No'), // <-- Text
+                                ),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      prodottiFiltratiFinali.remove(v);
+                                      prodotti.remove(v);
+                                      _saveprefs();
+                                    });
+                                  },
+                                  icon: Icon( // <-- Icon
+                                    Icons.done,
+                                    size: 24.0,
+                                  ),
+                                  label: Text('Si'), // <-- Text
+                                ),
                               ],
                             ),
                           ),
