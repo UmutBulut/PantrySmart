@@ -1,27 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pantrysmart/Classes/Prodotto.dart';
+import 'package:pantrysmart/Classes/TipiIcone.dart';
+import 'package:pantrysmart/Components/DropdownButtonTipi.dart';
+import 'package:pantrysmart/Presentation/Screens/prodottoView.dart';
 import 'package:pantrysmart/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-
-
-List<String> list = <String>[
-  'Qualsiasi',
-  'Ortofrutta',
-  'Panetteria',
-  'Macelleria',
-  'Frigo/surgelati',
-  'Bevande',
-  'Altro'];
-
-Map<String, IconData> iconsMap = {
-  'Ortofrutta': Icons.apple,
-  'Panetteria': Icons.bakery_dining,
-  'Macelleria': Icons.kebab_dining,
-  'Frigo/surgelati': Icons.ac_unit,
-  'Bevande': Icons.local_bar,
-  'Altro': Icons.pending,
-};
 
 List<Prodotto> prodotti = [];
 List<Prodotto> prodottiFiltratiRicerca = [];
@@ -37,6 +21,15 @@ class ListaView extends StatefulWidget {
 class ListaViewState extends State<ListaView> {
   //final SharedPreferences prefs;
   final fieldText = TextEditingController();
+  bool showEditProductTab = false;
+
+  //campi del prodotto
+  String denominazione = "";
+  String prezzo = "";
+  String quantita = "";
+  String tipo = "";
+  String scadenza = "";
+  String immagine = "";
 
   @override
   void initState() {
@@ -88,15 +81,35 @@ class ListaViewState extends State<ListaView> {
     fieldText.clear();
   }
 
-  void refresh() {
-    setState(() {});
+  void applicaFiltroProdotti(String res) {
+    setState(() {
+      if(res == 'Qualsiasi')
+        prodottiFiltratiTipo = prodotti;
+      else
+        prodottiFiltratiTipo = prodotti.where((p) => p.tipo == res).toList();
+
+      prodottiFiltratiFinali =
+          prodottiFiltratiTipo.toSet().where((element) =>
+              prodottiFiltratiRicerca.toSet().contains(element))
+              .toList();
+    });
+  }
+
+  void closeEditProdotto(){
+    setState(() {showEditProductTab = false;});
+  }
+
+  void openEditProdotto(){
+    setState(() {showEditProductTab = true;});
   }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      resizeToAvoidBottomInset: false,
+      body: !showEditProductTab ?
+      Center(
         child: Column(
           children: [
             Padding(
@@ -153,7 +166,9 @@ class ListaViewState extends State<ListaView> {
                   ),),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16,0,0,0),
-                  child: DropdownButtonTipi(notifyParent: refresh),
+                  child: DropdownButtonTipi(
+                    notifyParent: applicaFiltroProdotti,
+                    permettiQualsiasi: true),
                 ),
               ],
             ),
@@ -247,9 +262,9 @@ class ListaViewState extends State<ListaView> {
                                 child: Padding(
                                   padding: const EdgeInsets.fromLTRB(0,0,0,10),
                                   child: Text('Confermi la rimozione dell\'oggetto?',
-                                  style: TextStyle(
-                                      fontSize: 20
-                                  )),
+                                      style: TextStyle(
+                                          fontSize: 20
+                                      )),
                                 )),
                             subtitle: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -293,7 +308,9 @@ class ListaViewState extends State<ListaView> {
                     return Visibility(
                       visible: !isKeyBoardVisible,
                       child: ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          openEditProdotto();
+                        },
                         icon: Icon( // <-- Icon
                           Icons.add,
                           size: 30.0,
@@ -310,68 +327,17 @@ class ListaViewState extends State<ListaView> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class DropdownButtonTipi extends StatefulWidget {
-  const DropdownButtonTipi({super.key, required this.notifyParent});
-  final Function() notifyParent;
-  @override
-  State<DropdownButtonTipi> createState() => _DropdownButtonTipiState();
-}
-
-class _DropdownButtonTipiState extends State<DropdownButtonTipi> {
-  String dropdownValue = list.first;
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: CustomColors.primary),
-      underline: Container(
-        height: 2,
-        color: CustomColors.primaryContainer,
-      ),
-      onChanged: (String? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value!;
-          if(value == 'Qualsiasi'){
-            prodottiFiltratiTipo = prodotti;
-            prodottiFiltratiFinali =
-                prodottiFiltratiTipo.toSet().where((element) =>
-                    prodottiFiltratiRicerca.toSet().contains(element))
-                    .toList();
-          }else{
-            prodottiFiltratiTipo = prodotti.where((p) => p.tipo == value).toList();
-            prodottiFiltratiFinali =
-                prodottiFiltratiTipo.toSet().where((element) =>
-                    prodottiFiltratiRicerca.toSet().contains(element))
-                    .toList();
-          }
-        });
-        widget.notifyParent();
-      },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Row(
-            children: [
-              (value == 'Qualsiasi')?
-              const Text(''):
-              Icon(iconsMap[value])
-              ,
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10,0,0,0),
-                child: Text(value),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
+      ) :
+      ProdottoView(
+        title: 'Aggiungi un nuovo Prodotto!',
+        cancelFunction: closeEditProdotto,
+        okFunction: openEditProdotto,
+        denominazione: denominazione,
+        prezzo: prezzo,
+        quantita: quantita,
+        tipo: tipo,
+        scadenza: scadenza,
+        immagine: immagine,),
     );
   }
 }
