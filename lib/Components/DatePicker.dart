@@ -11,7 +11,7 @@ class PantryDatePicker extends StatefulWidget {
     required this.buttonLabel});
 
   final String? restorationId;
-  final Function() notifyParent;
+  final Function(DateTime res) notifyParent;
    final String buttonLabel;
   String dateString = "";
 
@@ -67,6 +67,7 @@ class _PantryDatePickerState extends State<PantryDatePicker>
     if (newSelectedDate != null) {
       setState(() {
         _selectedDate.value = newSelectedDate;
+        widget.notifyParent(_selectedDate.value);
       });
     }
   }

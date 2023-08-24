@@ -39,27 +39,32 @@ class ListaViewState extends State<ListaView> {
 
   Future<void> _loadprefs() async {
     final prefs = await SharedPreferences.getInstance();
+
+
     /*String encodedData = '';
     List<Prodotto> listaTest = [
       Prodotto(
           id:1,
           denominazione: 'Formaggio',
           tipo: 'Frigo/surgelati',
-          prezzo: 0.5,
+          prezzo: '0.5',
           quantita: '150g',
           scadenza: DateTime.now().toString(),
+          immagine: null,
           inRimozione: false),
       Prodotto(
           id:2,
           denominazione: 'Vino',
           tipo: 'Bevande',
-          prezzo: 7,
+          prezzo: '7',
           quantita: '1L',
           scadenza: DateTime.now().toString(),
+          immagine: null,
           inRimozione: false),
     ];
     encodedData = Prodotto.encode(listaTest);
     await prefs.setString('prodotti_key', encodedData);*/
+
 
     final String? prodottiString = await prefs.getString('prodotti_key');
     setState(() {
@@ -101,6 +106,11 @@ class ListaViewState extends State<ListaView> {
 
   void openEditProdotto(){
     setState(() {showEditProductTab = true;});
+  }
+
+  void closeAndRefreshPrefs(){
+    _loadprefs();
+    setState(() {showEditProductTab = false;});
   }
 
 
@@ -175,7 +185,7 @@ class ListaViewState extends State<ListaView> {
             Expanded(
                 child:  Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ListView(
+                  child: (prodottiFiltratiFinali != null)? ListView(
                     scrollDirection: Axis.vertical,
                     children: prodottiFiltratiFinali.map<Widget>(
                             (v) => Card(
@@ -299,7 +309,8 @@ class ListaViewState extends State<ListaView> {
                             ),
                           ),
                         )).toList(),
-                  ),
+                  ) :
+                  Text('Nessun prodotto'),
                 )),
             Padding(
               padding: const EdgeInsets.fromLTRB(0,0,0,10),
@@ -331,7 +342,7 @@ class ListaViewState extends State<ListaView> {
       ProdottoView(
         title: 'Aggiungi un nuovo Prodotto!',
         cancelFunction: closeEditProdotto,
-        okFunction: openEditProdotto,
+        okFunction: closeAndRefreshPrefs,
         denominazione: denominazione,
         prezzo: prezzo,
         quantita: quantita,

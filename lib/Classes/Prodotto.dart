@@ -4,9 +4,10 @@ class Prodotto {
   int? id;
   String? denominazione;
   String? tipo;
-  double? prezzo;
+  String? prezzo;
   String? quantita;
   String? scadenza;
+  String? immagine;
   bool? inRimozione;
 
   Prodotto({
@@ -16,6 +17,7 @@ class Prodotto {
     this.prezzo,
     this.quantita,
     this.scadenza,
+    this.immagine,
     this.inRimozione
   });
 
@@ -27,6 +29,7 @@ class Prodotto {
       prezzo: jsonData['prezzo'],
       quantita: jsonData['quantita'],
       scadenza: jsonData['scadenza'],
+      immagine: jsonData['immagine'],
       inRimozione: jsonData['inRimozione']
     );
   }
@@ -38,6 +41,7 @@ class Prodotto {
     'prezzo': prodotto.prezzo,
     'quantita': prodotto.quantita,
     'scadenza': prodotto.scadenza,
+    'immagine': prodotto.immagine,
     'inRimozione': prodotto.inRimozione,
   };
 
