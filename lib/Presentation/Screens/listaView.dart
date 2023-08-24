@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pantrysmart/Classes/Prodotto.dart';
 import 'package:pantrysmart/Classes/TipiIcone.dart';
@@ -177,8 +179,8 @@ class ListaViewState extends State<ListaView> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16,0,0,0),
                   child: DropdownButtonTipi(
-                    notifyParent: applicaFiltroProdotti,
-                    permettiQualsiasi: true),
+                      notifyParent: applicaFiltroProdotti,
+                      permettiQualsiasi: true),
                 ),
               ],
             ),
@@ -240,7 +242,16 @@ class ListaViewState extends State<ListaView> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       ElevatedButton.icon(
-                                        onPressed: () {},
+                                        onPressed: (v.immagine != null)?() {
+                                          showDialog(context: context, builder: (context) =>
+                                              AlertDialog(
+                                                  title: Text('Foto'),
+                                                  content: Image.memory(
+                                                    base64Decode(v.immagine!),
+                                                  ))
+                                          );
+                                        } :
+                                        null,
                                         icon: Icon( // <-- Icon
                                           Icons.visibility,
                                           size: 24.0,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:image_picker/image_picker.dart';
@@ -84,9 +86,11 @@ class ProdottoViewState extends State<ProdottoView> {
   }
 
   Future<void> getImage() async {
-    widget.image = await widget.imagePicker.pickImage(source: ImageSource.gallery);
+    widget.image = await widget.imagePicker.pickImage(source: ImageSource.camera);
+    var byteImage = await widget.image!.readAsBytes();
+    String base64Image = base64Encode(byteImage);
     setState(() {
-      widget.immagine = widget.image.toString();
+      widget.immagine = base64Image;
     });
   }
 
@@ -201,7 +205,7 @@ class ProdottoViewState extends State<ProdottoView> {
               padding: const EdgeInsets.fromLTRB(16,8,16,8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton.icon(
                     style: ButtonStyle(
@@ -210,16 +214,29 @@ class ProdottoViewState extends State<ProdottoView> {
                       getImage();
                     },
                     icon: Icon( // <-- Icon
-                      Icons.upload,
+                      Icons.camera,
                       size: 24.0,
                     ),
-                    label: Text('Carica immagine'), // <-- Text
+                    label: Text(
+                      'Scatta una\nFoto!'
+                    ), // <-- Text
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 16,0,0),
-                    child: (widget.image != null)?
-                    Text(widget.image!.name):
-                    Text('Nessuna immagine selezionata.'),
+                  ElevatedButton.icon(
+                    onPressed: (widget.immagine != null)?() {
+                      showDialog(context: context, builder: (context) =>
+                          AlertDialog(
+                              title: Text('Foto'),
+                              content: Image.memory(
+                                  base64Decode(widget.immagine!),
+                              ))
+                      );
+                    } :
+                    null,
+                    icon: Icon( // <-- Icon
+                      Icons.visibility,
+                      size: 24.0,
+                    ),
+                    label: Text('Visualizza\nimmagine'), // <-- Text
                   ),
                 ],
               ),
