@@ -23,20 +23,20 @@ class ListaView extends StatefulWidget {
 class ListaViewState extends State<ListaView> {
   //final SharedPreferences prefs;
   final fieldText = TextEditingController();
-  bool showEditProductTab = false;
+  bool mostraTabProdotto = false;
+  Prodotto? prodottoDaModificare;
 
-  //campi del prodotto
-  String denominazione = "";
-  String prezzo = "";
-  String quantita = "";
-  String tipo = "";
-  String scadenza = "";
-  String immagine = "";
 
   @override
   void initState() {
     super.initState();
     _loadprefs();
+  }
+
+  @override
+  void dispose() {
+    fieldText.dispose();
+    super.dispose();
   }
 
   Future<void> _loadprefs() async {
@@ -102,17 +102,23 @@ class ListaViewState extends State<ListaView> {
     });
   }
 
-  void closeEditProdotto(){
-    setState(() {showEditProductTab = false;});
+  void chiudiTabProdotto(){
+    setState(() {
+      mostraTabProdotto = false;
+      prodottoDaModificare = null;
+    });
   }
 
-  void openEditProdotto(){
-    setState(() {showEditProductTab = true;});
+  void apriTabProdotto(){
+    setState(() {mostraTabProdotto = true;});
   }
 
-  void closeAndRefreshPrefs(){
+  void chiudiTabProdottoEAggiorna(){
     _loadprefs();
-    setState(() {showEditProductTab = false;});
+    setState(() {
+      mostraTabProdotto = false;
+      prodottoDaModificare = null;
+    });
   }
 
 
@@ -120,7 +126,7 @@ class ListaViewState extends State<ListaView> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: !showEditProductTab ?
+      body: !mostraTabProdotto ?
       Center(
         child: Column(
           children: [
@@ -190,8 +196,8 @@ class ListaViewState extends State<ListaView> {
                   child: (prodottiFiltratiFinali != null)? ListView(
                     scrollDirection: Axis.vertical,
                     children: prodottiFiltratiFinali.map<Widget>(
-                            (v) => Card(
-                          child: (!v.inRimozione!)?
+                            (prod) => Card(
+                          child: (!prod.inRimozione!)?
                           ListTile(
                             title: Padding(
                               padding: const EdgeInsets.fromLTRB(0,0,0,10),
@@ -200,12 +206,12 @@ class ListaViewState extends State<ListaView> {
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(iconsMap[v.tipo!],
+                                      Icon(iconsMap[prod.tipo!],
                                         size: 25,),
                                       Padding(
                                         padding: const EdgeInsets.fromLTRB(10,0,0,0),
                                         child: Text(
-                                          v.denominazione!,
+                                          prod.denominazione!,
                                           style: TextStyle(
                                               fontSize: 25
                                           ),
@@ -214,7 +220,7 @@ class ListaViewState extends State<ListaView> {
                                     ],
                                   ),
                                   Text(
-                                    '('+v.prezzo.toString()+'€)',
+                                    '('+prod.prezzo.toString()+'€)',
                                     style: TextStyle(
                                       color: CustomColors.primaryContainer,
                                       fontSize: 20,
@@ -226,12 +232,12 @@ class ListaViewState extends State<ListaView> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Quantità: '+ v.quantita!,
+                                Text('Quantità: '+ prod.quantita!,
                                   style: TextStyle(
                                       fontSize: 20
                                   ),
                                 ),
-                                Text('Scadenza: '+ v.scadenza!.substring(0,10),
+                                Text('Scadenza: '+ prod.scadenza!.substring(0,10),
                                   style: TextStyle(
                                       fontSize: 20
                                   ),
@@ -242,12 +248,12 @@ class ListaViewState extends State<ListaView> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       ElevatedButton.icon(
-                                        onPressed: (v.immagine != null)?() {
+                                        onPressed: (prod.immagine != null)?() {
                                           showDialog(context: context, builder: (context) =>
                                               AlertDialog(
                                                   title: Text('Foto'),
                                                   content: Image.memory(
-                                                    base64Decode(v.immagine!),
+                                                    base64Decode(prod.immagine!),
                                                   ))
                                           );
                                         } :
@@ -261,12 +267,17 @@ class ListaViewState extends State<ListaView> {
                                       Row(
                                         children: [
                                           IconButton(
-                                              onPressed: (){},
+                                              onPressed: (){
+                                                setState(() {
+                                                  mostraTabProdotto = true;
+                                                  prodottoDaModificare = prod;
+                                                });
+                                              },
                                               icon: Icon(Icons.edit)),
                                           IconButton(
                                               onPressed: (){
                                                 setState(() {
-                                                  v.inRimozione = true;
+                                                  prod.inRimozione = true;
                                                 });
                                               },
                                               icon: Icon(Icons.delete)),
@@ -293,7 +304,7 @@ class ListaViewState extends State<ListaView> {
                                 ElevatedButton.icon(
                                   onPressed: () {
                                     setState(() {
-                                      v.inRimozione = false;
+                                      prod.inRimozione = false;
                                     });
                                   },
                                   icon: Icon( // <-- Icon
@@ -305,8 +316,8 @@ class ListaViewState extends State<ListaView> {
                                 ElevatedButton.icon(
                                   onPressed: () {
                                     setState(() {
-                                      prodottiFiltratiFinali.remove(v);
-                                      prodotti.remove(v);
+                                      prodottiFiltratiFinali.remove(prod);
+                                      prodotti.remove(prod);
                                       _saveprefs();
                                     });
                                   },
@@ -331,7 +342,7 @@ class ListaViewState extends State<ListaView> {
                       visible: !isKeyBoardVisible,
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          openEditProdotto();
+                          apriTabProdotto();
                         },
                         icon: Icon( // <-- Icon
                           Icons.add,
@@ -351,15 +362,14 @@ class ListaViewState extends State<ListaView> {
         ),
       ) :
       ProdottoView(
-        title: 'Aggiungi un nuovo Prodotto!',
-        cancelFunction: closeEditProdotto,
-        okFunction: closeAndRefreshPrefs,
-        denominazione: denominazione,
-        prezzo: prezzo,
-        quantita: quantita,
-        tipo: tipo,
-        scadenza: scadenza,
-        immagine: immagine,),
+          title: (prodottoDaModificare != null)?
+          'Modifica i campi del Prodotto!' :
+          'Aggiungi un nuovo Prodotto!',
+          cancelFunction: chiudiTabProdotto,
+          okFunction: chiudiTabProdottoEAggiorna,
+          prodottoDaModificare: (prodottoDaModificare != null)?
+          prodottoDaModificare :
+          null),
     );
   }
 }

@@ -14,12 +14,7 @@ class ProdottoView extends StatefulWidget{
     required this.title,
     required this.cancelFunction,
     required this.okFunction,
-    required this.denominazione,
-    required this.prezzo,
-    required this.quantita,
-    required this.tipo,
-    required this.scadenza,
-    required this.immagine,
+    this.prodottoDaModificare,
   });
   final String title;
   final Function() cancelFunction;
@@ -29,6 +24,7 @@ class ProdottoView extends StatefulWidget{
   bool abilitaSalva = false;
 
   //campi del prodotto
+  Prodotto? prodottoDaModificare;
   String? denominazione;
   String? prezzo;
   String? quantita;
@@ -44,13 +40,22 @@ class ProdottoViewState extends State<ProdottoView> {
   @override
   void initState() {
     super.initState();
-
-    widget.denominazione = "";
-    widget.prezzo  = "";
-    widget.quantita = "";
-    widget.tipo = listFiltriSenzaQualsiasi.first;
-    widget.scadenza = DateTime.now().toString();
-    widget.immagine = null;
+    if(widget.prodottoDaModificare != null ){
+      widget.denominazione = widget.prodottoDaModificare!.denominazione;
+      widget.prezzo  = widget.prodottoDaModificare!.prezzo;
+      widget.quantita = widget.prodottoDaModificare!.quantita;
+      widget.tipo = widget.prodottoDaModificare!.tipo;
+      widget.scadenza = widget.prodottoDaModificare!.scadenza;
+      widget.immagine = widget.prodottoDaModificare!.immagine;
+    }
+    else{
+      widget.denominazione = "";
+      widget.prezzo  = "";
+      widget.quantita = "";
+      widget.tipo = listFiltriSenzaQualsiasi.first;
+      widget.scadenza = DateTime.now().toString();
+      widget.immagine = null;
+    }
 
     refreshAbilitaSalva();
   }
@@ -68,18 +73,46 @@ class ProdottoViewState extends State<ProdottoView> {
     final String? prodottiString = await prefs.getString('prodotti_key');
     var prodotti = Prodotto.decode(prodottiString!);
     prodotti.sort((a, b) => a.id!.compareTo(b.id!));
-    var ultimoProdotto = prodotti.last;
-    var nuovoProdotto = Prodotto(
-        id: 7,
-        denominazione: widget.denominazione,
-        prezzo: widget.prezzo!,
-        tipo: widget.tipo,
-        scadenza: widget.scadenza,
-        quantita: widget.quantita,
-        immagine: widget.immagine,
-        inRimozione: false
-    );
-    prodotti.add(nuovoProdotto);
+
+    if(widget.prodottoDaModificare != null)
+    {
+      var nuovoProdotto = Prodotto(
+          id: widget.prodottoDaModificare!.id,
+          denominazione: widget.denominazione,
+          prezzo: widget.prezzo!,
+          tipo: widget.tipo,
+          scadenza: widget.scadenza,
+          quantita: widget.quantita,
+          immagine: widget.immagine,
+          inRimozione: false);
+
+      var vecchioProdotto =
+      prodotti.firstWhere((element) => element.id == widget.prodottoDaModificare!.id);
+      prodotti.remove(vecchioProdotto);
+      prodotti.add(nuovoProdotto);
+    }
+    else
+    {
+      var nuovoId = 1;
+      if(prodotti.isNotEmpty)
+      {
+        var ultimoProdotto = prodotti.last;
+        nuovoId = ultimoProdotto.id! +1;
+      }
+
+      var nuovoProdotto = Prodotto(
+          id: nuovoId,
+          denominazione: widget.denominazione,
+          prezzo: widget.prezzo!,
+          tipo: widget.tipo,
+          scadenza: widget.scadenza,
+          quantita: widget.quantita,
+          immagine: widget.immagine,
+          inRimozione: false
+      );
+      prodotti.add(nuovoProdotto);
+    }
+
     String encodedData = Prodotto.encode(prodotti);
     await prefs.setString('prodotti_key', encodedData);
     widget.okFunction();
@@ -112,7 +145,7 @@ class ProdottoViewState extends State<ProdottoView> {
       children: [
         SizedBox(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(8,24,16,8),
+            padding: const EdgeInsets.fromLTRB(8,24,16,16),
             child: Text(widget.title,
               style: TextStyle(
                   fontSize: 25
@@ -123,7 +156,10 @@ class ProdottoViewState extends State<ProdottoView> {
           padding: const EdgeInsets.fromLTRB(16,8,16,8),
           child: SizedBox(
             height: 50,
-            child: TextField(
+            child: TextFormField(
+              initialValue: (widget.prodottoDaModificare != null)?
+              widget.denominazione :
+              null,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Inserisci un Nome [OBBLIGATORIO]',
@@ -140,7 +176,10 @@ class ProdottoViewState extends State<ProdottoView> {
           padding: const EdgeInsets.fromLTRB(16,8,16,8),
           child: SizedBox(
             height: 50,
-            child: TextField(
+            child: TextFormField(
+              initialValue: (widget.prodottoDaModificare != null)?
+              widget.prezzo :
+              null,
               keyboardType:TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -159,7 +198,10 @@ class ProdottoViewState extends State<ProdottoView> {
           padding: const EdgeInsets.fromLTRB(16,8,16,8),
           child: SizedBox(
             height: 50,
-            child: TextField(
+            child: TextFormField(
+              initialValue: (widget.prodottoDaModificare != null)?
+              widget.quantita :
+              null,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Inserisci una Quantità [OBBLIGATORIO]',
@@ -186,7 +228,10 @@ class ProdottoViewState extends State<ProdottoView> {
                   padding: const EdgeInsets.fromLTRB(16,0,0,0),
                   child: DropdownButtonTipi(
                       notifyParent: applicaFiltroProdotti,
-                      permettiQualsiasi: false),
+                      permettiQualsiasi: false,
+                      tipoIniziale: (widget.prodottoDaModificare != null)?
+                      widget.tipo! :
+                      null),
                 ),
               ],
             ),

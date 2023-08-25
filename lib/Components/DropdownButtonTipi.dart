@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pantrysmart/Classes/Prodotto.dart';
 import 'package:pantrysmart/Classes/TipiIcone.dart';
 import 'package:pantrysmart/colors.dart';
 
@@ -7,10 +6,12 @@ class DropdownButtonTipi extends StatefulWidget {
   DropdownButtonTipi({
     super.key,
     required this.notifyParent,
-    required this.permettiQualsiasi
+    required this.permettiQualsiasi,
+    this.tipoIniziale
   });
   final Function(String res) notifyParent;
   final bool permettiQualsiasi;
+  String? tipoIniziale;
   @override
   State<DropdownButtonTipi> createState() => _DropdownButtonTipiState();
 }
@@ -23,7 +24,10 @@ class _DropdownButtonTipiState extends State<DropdownButtonTipi> {
   void initState() {
     super.initState();
     list = widget.permettiQualsiasi ? listFiltri : listFiltriSenzaQualsiasi;
-    dropdownValue = list.first;
+    if(widget.tipoIniziale != null)
+      dropdownValue = widget.tipoIniziale!;
+    else
+      dropdownValue = list.first;
   }
 
   @override
