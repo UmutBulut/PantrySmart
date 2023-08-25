@@ -5,6 +5,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pantrysmart/Classes/Prodotto.dart';
 import 'package:pantrysmart/Classes/TipiIcone.dart';
+import 'package:pantrysmart/Classes/Colors.dart';
 import 'package:pantrysmart/Components/DatePicker.dart';
 import 'package:pantrysmart/Components/DropdownButtonTipi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +23,7 @@ class ProdottoView extends StatefulWidget{
   final ImagePicker imagePicker = ImagePicker();
   XFile? image;
   bool abilitaSalva = false;
+  bool nuovaConferma = false;
 
   //campi del prodotto
   Prodotto? prodottoDaModificare;
@@ -136,6 +138,15 @@ class ProdottoViewState extends State<ProdottoView> {
   void applicaFiltroProdotti(String res) {
     setState(() {
       widget.tipo = res;
+    });
+  }
+
+  void aggiornaStatoImmagine(bool stato, bool rimuoviImmagine){
+    setState(() {
+      widget.nuovaConferma = stato;
+      if(rimuoviImmagine){
+        widget.immagine = null;
+      }
     });
   }
 
@@ -263,18 +274,73 @@ class ProdottoViewState extends State<ProdottoView> {
                       size: 24.0,
                     ),
                     label: Text(
-                      'Scatta una\nFoto!'
+                        'Scatta una\nFoto!'
                     ), // <-- Text
                   ),
                   ElevatedButton.icon(
-                    onPressed: (widget.immagine != null)?() {
-                      showDialog(context: context, builder: (context) =>
-                          AlertDialog(
-                              title: Text('Foto'),
-                              content: Image.memory(
-                                  base64Decode(widget.immagine!),
-                              ))
-                      );
+                    onPressed: (widget.immagine != null)?() async {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return StatefulBuilder(builder: (context, setState) {
+                              return AlertDialog(
+                                  content: Image.memory(
+                                    base64Decode(widget.immagine!),
+                                  ),
+                                  actionsAlignment: MainAxisAlignment.spaceBetween,
+                                  actions: [
+                                    ElevatedButton.icon(
+                                      style: ButtonStyle(
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        aggiornaStatoImmagine(false, false);
+                                      },
+                                      icon: Icon( // <-- Icon
+                                        Icons.close,
+                                        size: 24.0,
+                                      ),
+                                      label: Text(
+                                          'Chiudi'
+                                      ), // <-- Text
+                                    ),
+                                    (!widget.nuovaConferma)?
+                                    ElevatedButton.icon(
+                                      style: ButtonStyle(
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          aggiornaStatoImmagine(true, false);
+                                        });
+                                      },
+                                      icon: Icon( // <-- Icon
+                                        Icons.delete,
+                                        size: 24.0,
+                                      ),
+                                      label: Text(
+                                          'Rimuovi'
+                                      ), // <-- Text
+                                    )
+                                    :
+                                    ElevatedButton.icon(
+                                      style: TextButton.
+                                      styleFrom(backgroundColor: CustomColors.secondary),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        aggiornaStatoImmagine(false, true);
+                                      },
+                                      icon: Icon( // <-- Icon
+                                        Icons.delete,
+                                        size: 24.0,
+                                      ),
+                                      label: Text(
+                                          'Premi per confermare'
+                                      ), // <-- Text
+                                    )
+                                  ]
+                              );
+                            });
+                          });
                     } :
                     null,
                     icon: Icon( // <-- Icon

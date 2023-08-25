@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:pantrysmart/Classes/Colors.dart';
 import 'package:pantrysmart/Classes/Prodotto.dart';
 import 'package:pantrysmart/Classes/TipiIcone.dart';
 import 'package:pantrysmart/Components/DropdownButtonTipi.dart';
 import 'package:pantrysmart/Presentation/Screens/prodottoView.dart';
-import 'package:pantrysmart/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 

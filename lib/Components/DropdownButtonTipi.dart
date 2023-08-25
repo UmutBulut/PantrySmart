@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pantrysmart/Classes/Colors.dart';
 import 'package:pantrysmart/Classes/TipiIcone.dart';
-import 'package:pantrysmart/colors.dart';
 
 class DropdownButtonTipi extends StatefulWidget {
   DropdownButtonTipi({
