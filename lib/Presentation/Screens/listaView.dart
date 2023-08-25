@@ -21,7 +21,6 @@ class ListaView extends StatefulWidget {
 }
 
 class ListaViewState extends State<ListaView> {
-  //final SharedPreferences prefs;
   final fieldText = TextEditingController();
   bool mostraTabProdotto = false;
   Prodotto? prodottoDaModificare;

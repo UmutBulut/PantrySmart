@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pantrysmart/LandingViewBloc/landing_view_bloc.dart';
 import 'package:pantrysmart/Presentation/Screens/listaView.dart';
+import 'package:pantrysmart/Presentation/Screens/storicoView.dart';
 
 class LandingView extends StatelessWidget{
   LandingView({super.key});
@@ -25,7 +26,7 @@ class LandingView extends StatelessWidget{
     List<Widget> bottomNavScreens = [
       Text('Uno'),
       ListaView(),
-      Text('Tre'),
+      StoricoView(),
     ];
 
     return BlocConsumer<LandingViewBloc, LandingViewState>(
