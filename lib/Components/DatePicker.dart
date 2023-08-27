@@ -8,12 +8,14 @@ class PantryDatePicker extends StatefulWidget {
     this.restorationId,
     required this.notifyParent,
     required this.dateString,
-    required this.buttonLabel});
+    required this.buttonLabel,
+   required this.resettato});
 
   final String? restorationId;
   final Function(DateTime res) notifyParent;
-   final String buttonLabel;
+  final String buttonLabel;
   String dateString = "";
+  bool resettato;
 
   @override
   State<PantryDatePicker> createState() => _PantryDatePickerState();
@@ -88,8 +90,10 @@ class _PantryDatePickerState extends State<PantryDatePicker>
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16,0,0,0),
-                child: Text(_selectedDate.value.toString().substring(0,10)),
-              )
+                child: (!widget.resettato)?
+                Text(_selectedDate.value.toString().substring(0,10)):
+                Text('Nessuna data\nselezionata.'),
+              ),
             ],
           ),
         ),

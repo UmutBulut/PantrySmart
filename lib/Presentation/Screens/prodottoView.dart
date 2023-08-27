@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pantrysmart/Classes/Prodotto.dart';
+import 'package:pantrysmart/Classes/Storico.dart';
 import 'package:pantrysmart/Classes/TipiIcone.dart';
 import 'package:pantrysmart/Classes/Colors.dart';
 import 'package:pantrysmart/Components/DatePicker.dart';
@@ -54,7 +54,7 @@ class ProdottoViewState extends State<ProdottoView> {
       widget.denominazione = "";
       widget.prezzo  = "";
       widget.quantita = "";
-      widget.tipo = listFiltriSenzaQualsiasi.first;
+      widget.tipo = listFiltriTipoProdotti.first;
       widget.scadenza = DateTime.now().toString();
       widget.immagine = null;
     }
@@ -72,8 +72,13 @@ class ProdottoViewState extends State<ProdottoView> {
 
   Future<void> _saveChanges() async {
     final prefs = await SharedPreferences.getInstance();
+
     final String? prodottiString = await prefs.getString('prodotti_key');
+    final String? storicoString = await prefs.getString('storico_key');
+
+    var listaStorico = DatoStorico.decode(storicoString!);
     var prodotti = Prodotto.decode(prodottiString!);
+
     prodotti.sort((a, b) => a.id!.compareTo(b.id!));
 
     if(widget.prodottoDaModificare != null)
@@ -92,6 +97,15 @@ class ProdottoViewState extends State<ProdottoView> {
       prodotti.firstWhere((element) => element.id == widget.prodottoDaModificare!.id);
       prodotti.remove(vecchioProdotto);
       prodotti.add(nuovoProdotto);
+
+      var nuovaOperazione = DatoStorico(
+          idProdotto: widget.prodottoDaModificare!.id,
+          denominazioneProdotto: widget.denominazione,
+          tipoOperazione: 'Modifica',
+          dataOperazione: DateTime.now().toString(),
+          inRimozione: false
+      );
+      listaStorico.add(nuovaOperazione);
     }
     else
     {
@@ -113,10 +127,21 @@ class ProdottoViewState extends State<ProdottoView> {
           inRimozione: false
       );
       prodotti.add(nuovoProdotto);
+
+      var nuovaOperazione = DatoStorico(
+          idProdotto: nuovoId,
+          denominazioneProdotto: widget.denominazione,
+          tipoOperazione: 'Aggiunta',
+          dataOperazione: DateTime.now().toString(),
+          inRimozione: false
+      );
+      listaStorico.add(nuovaOperazione);
     }
 
-    String encodedData = Prodotto.encode(prodotti);
-    await prefs.setString('prodotti_key', encodedData);
+    String encodedProdotti = Prodotto.encode(prodotti);
+    await prefs.setString('prodotti_key', encodedProdotti);
+    String encodedStorico = DatoStorico.encode(listaStorico);
+    await prefs.setString('storico_key', encodedStorico);
     widget.okFunction();
   }
 
@@ -240,6 +265,7 @@ class ProdottoViewState extends State<ProdottoView> {
                   child: DropdownButtonTipi(
                       notifyParent: applicaFiltroProdotti,
                       permettiQualsiasi: false,
+                      filtroOperazioni: false,
                       tipoIniziale: (widget.prodottoDaModificare != null)?
                       widget.tipo! :
                       null),
@@ -253,6 +279,7 @@ class ProdottoViewState extends State<ProdottoView> {
           child: PantryDatePicker(
             buttonLabel: 'Seleziona una data di Scadenza:',
             notifyParent: getSelectedDate,
+            resettato: false,
             dateString: widget.scadenza!,
           ),
         ),

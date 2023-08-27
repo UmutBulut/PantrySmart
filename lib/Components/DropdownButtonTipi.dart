@@ -7,9 +7,11 @@ class DropdownButtonTipi extends StatefulWidget {
     super.key,
     required this.notifyParent,
     required this.permettiQualsiasi,
+    required this.filtroOperazioni,
     this.tipoIniziale
   });
   final Function(String res) notifyParent;
+  final bool filtroOperazioni;
   final bool permettiQualsiasi;
   String? tipoIniziale;
   @override
@@ -23,7 +25,13 @@ class _DropdownButtonTipiState extends State<DropdownButtonTipi> {
   @override
   void initState() {
     super.initState();
-    list = widget.permettiQualsiasi ? listFiltri : listFiltriSenzaQualsiasi;
+    list = widget.filtroOperazioni ?
+    List.of(listFiltriTipoOperazioni) :
+    List.of(listFiltriTipoProdotti);
+
+    if(widget.permettiQualsiasi)
+      list.insert(0,'Qualsiasi');
+
     if(widget.tipoIniziale != null)
       dropdownValue = widget.tipoIniziale!;
     else

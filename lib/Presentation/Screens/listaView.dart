@@ -1,8 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:pantrysmart/Classes/Colors.dart';
 import 'package:pantrysmart/Classes/Prodotto.dart';
+import 'package:pantrysmart/Classes/Storico.dart';
 import 'package:pantrysmart/Classes/TipiIcone.dart';
 import 'package:pantrysmart/Components/DropdownButtonTipi.dart';
 import 'package:pantrysmart/Presentation/Screens/prodottoView.dart';
@@ -76,11 +76,26 @@ class ListaViewState extends State<ListaView> {
     });
   }
 
-  Future<void> _saveprefs() async {
+  Future<void> _saveProdotti() async {
     final prefs = await SharedPreferences.getInstance();
-    String encodedData = '';
-    encodedData = Prodotto.encode(prodotti);
+    var encodedData = Prodotto.encode(prodotti);
     await prefs.setString('prodotti_key', encodedData);
+  }
+
+  Future<void> _saveStorico(int id, String denominazione) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? storicoString = await prefs.getString('storico_key');
+    var listaStorico = DatoStorico.decode(storicoString!);
+    var nuovaOperazione = DatoStorico(
+        idProdotto: id,
+        denominazioneProdotto: denominazione,
+        tipoOperazione: 'Rimozione',
+        dataOperazione: DateTime.now().toString(),
+        inRimozione: false
+    );
+    listaStorico.add(nuovaOperazione);
+    var encodedData = DatoStorico.encode(listaStorico);
+    await prefs.setString('storico_key', encodedData);
   }
 
   void clearText() {
@@ -119,7 +134,6 @@ class ListaViewState extends State<ListaView> {
       prodottoDaModificare = null;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +199,9 @@ class ListaViewState extends State<ListaView> {
                   padding: const EdgeInsets.fromLTRB(16,0,0,0),
                   child: DropdownButtonTipi(
                       notifyParent: applicaFiltroProdotti,
-                      permettiQualsiasi: true),
+                      permettiQualsiasi: true,
+                      filtroOperazioni: false,
+                  ),
                 ),
               ],
             ),
@@ -196,6 +212,12 @@ class ListaViewState extends State<ListaView> {
                     scrollDirection: Axis.vertical,
                     children: prodottiFiltratiFinali.map<Widget>(
                             (prod) => Card(
+                          shape: RoundedRectangleBorder( //<-- SEE HERE
+                            side: BorderSide(
+                              color: CustomColors.primary,
+                            ),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
                           child: (!prod.inRimozione!)?
                           ListTile(
                             title: Padding(
@@ -317,7 +339,8 @@ class ListaViewState extends State<ListaView> {
                                     setState(() {
                                       prodottiFiltratiFinali.remove(prod);
                                       prodotti.remove(prod);
-                                      _saveprefs();
+                                      _saveProdotti();
+                                      _saveStorico(prod.id!, prod.denominazione!);
                                     });
                                   },
                                   icon: Icon( // <-- Icon
