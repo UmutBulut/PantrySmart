@@ -58,7 +58,7 @@ class StoricoViewState extends State<StoricoView> {
     setState(() {
       listaStorico = DatoStorico.decode(storicoString!);
       listaStoricoFiltrataData = listaStorico.where((element) =>
-          element.dataOperazione!.substring(0,10) == dataSelezionata!.substring(0,10)).toList();
+      element.dataOperazione!.substring(0,10) == dataSelezionata!.substring(0,10)).toList();
       applicaFiltroTipo('Qualsiasi');
 
       aggiornaLista();
@@ -112,7 +112,7 @@ class StoricoViewState extends State<StoricoView> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(8,16,16,16),
+          padding: const EdgeInsets.fromLTRB(8,16,16,0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -143,38 +143,19 @@ class StoricoViewState extends State<StoricoView> {
         Padding(
           padding: const EdgeInsets.fromLTRB(8,16,16,16),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text('Filtra per Tipo:',
-                    style: TextStyle(
-                        fontSize: 18
-                    ),),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16,0,0,0),
-                    child: DropdownButtonTipi(
-                        notifyParent: applicaFiltroTipo,
-                        permettiQualsiasi: true,
-                        filtroOperazioni: true,
-                        tipoIniziale: null),
-                  ),
-                ],
-              ),
-              SizedBox(
-                child: ElevatedButton.icon(
-                  onPressed: (!nuovaConferma)? () {
-                    setState(() {
-                      nuovaConferma = true;
-                    });
-                  }:
-                  null,
-                  icon: Icon( // <-- Icon
-                    Icons.delete,
-                  ),
-                  label: Text('Rimuovi\ntutto'), // <-- Text
-                ),
+              Text('Filtra per Tipo:',
+                style: TextStyle(
+                    fontSize: 18
+                ),),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16,0,0,0),
+                child: DropdownButtonTipi(
+                    notifyParent: applicaFiltroTipo,
+                    permettiQualsiasi: true,
+                    filtroOperazioni: true,
+                    tipoIniziale: null),
               ),
             ],
           ),
@@ -309,14 +290,14 @@ class StoricoViewState extends State<StoricoView> {
             )
                 :
             Card(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color: CustomColors.primary,
+                ),
+                borderRadius: BorderRadius.circular(20.0),
+              ),
               child: Center(
                 child: ListTile(
-                  shape: RoundedRectangleBorder( //<-- SEE HERE
-                    side: BorderSide(
-                      color: CustomColors.primary,
-                    ),
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
                   title: Padding(
                     padding: const EdgeInsets.fromLTRB(0,0,0,10),
                     child: Row(
@@ -365,6 +346,27 @@ class StoricoViewState extends State<StoricoView> {
               ),
             )
         ),
+        Padding(
+            padding: const EdgeInsets.fromLTRB(0,0,0,10),
+            child: SizedBox(
+              child: ElevatedButton.icon(
+                onPressed: (!nuovaConferma)? () {
+                  setState(() {
+                    nuovaConferma = true;
+                  });
+                }:
+                null,
+                icon: Icon( // <-- Icon
+                  Icons.delete,
+                  size: 30.0,
+                ),
+                label: Text('Rimuovi tutto',
+                    style: TextStyle(
+                        fontSize: 25
+                    )), // <-- Text
+              ),
+            )
+        )
       ],
     );
   }
