@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pantrysmart/LandingViewBloc/landing_view_bloc.dart';
+import 'package:pantrysmart/Presentation/Screens/homeView.dart';
 import 'package:pantrysmart/Presentation/Screens/listaView.dart';
 import 'package:pantrysmart/Presentation/Screens/storicoView.dart';
 
@@ -24,7 +25,7 @@ class LandingView extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     List<Widget> bottomNavScreens = [
-      Text('Uno'),
+      HomeView(),
       ListaView(),
       StoricoView(),
     ];

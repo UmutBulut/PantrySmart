@@ -18,7 +18,6 @@ class StoricoView extends StatefulWidget {
 }
 
 class StoricoViewState extends State<StoricoView> {
-  final fieldText = TextEditingController();
   bool nuovaConferma = false;
   String? dataSelezionata;
   Prodotto? prodottoDaModificare;
@@ -30,12 +29,6 @@ class StoricoViewState extends State<StoricoView> {
     dataSelezionata = DateTime.now().toString();
     resettato = false;
     _loadprefs();
-  }
-
-  @override
-  void dispose() {
-    fieldText.dispose();
-    super.dispose();
   }
 
   Future<void> _loadprefs() async {
