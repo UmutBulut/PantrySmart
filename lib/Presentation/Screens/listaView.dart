@@ -214,7 +214,7 @@ class ListaViewState extends State<ListaView> {
                             (prod) => Card(
                           shape: RoundedRectangleBorder( //<-- SEE HERE
                             side: BorderSide(
-                              color: CustomColors.primary,
+                              color: CustomColors.primaryContainer,
                             ),
                             borderRadius: BorderRadius.circular(20.0),
                           ),

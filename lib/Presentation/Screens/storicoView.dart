@@ -162,7 +162,7 @@ class StoricoViewState extends State<StoricoView> {
                         (stor) => Card(
                       shape: RoundedRectangleBorder( //<-- SEE HERE
                         side: BorderSide(
-                          color: CustomColors.primary,
+                          color: CustomColors.primaryContainer,
                         ),
                         borderRadius: BorderRadius.circular(20.0),
                       ),

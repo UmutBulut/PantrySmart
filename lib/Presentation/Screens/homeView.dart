@@ -67,122 +67,190 @@ class HomeViewState extends State<HomeView> {
     return Center(
       child: Column(
         children: [
-          Text('Oggi è il: ' + oggi.toString().substring(0,10)),
-          Row(
-            children: [
-              Text('Scadenze'),
-              ElevatedButton.icon(
-                onPressed: () {
-                },
-                icon: Icon( // <-- Icon
-                  Icons.delete,
-                  size: 24.0,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0,16,0,0),
+            child: Text('Oggi è il: ' + oggi.toString().substring(0,10),
+              style: TextStyle(
+                  fontSize: 20
+              ),),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0,20,0,0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16,0,0,0),
+                  child: Text('SCADENZE',
+                    style: TextStyle(
+                        fontSize: 28,
+                        color: CustomColors.primaryContainer
+                    ),),
                 ),
-                label: Text('Pulisci'), // <-- Text
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                    },
+                    icon: Icon( // <-- Icon
+                      Icons.delete,
+                      size: 24.0,
+                    ),
+                    label: Text('Pulisci'), // <-- Text
+                  ),
+                )
+              ],
+            ),
           ),
           Container(
-            height: 100,
+            height: 158,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: scadenze.map<Widget>(
                       (scad) => Container(
                     width: 250,
-                    child: Card(child:
-                    ListTile(
-                      title: Column(
-                        children: [
-                          Text(
-                            scad.denominazioneProdotto!,
-                            style:TextStyle(fontSize: 18, color: Colors.black),),
-                          Text(scad.data!),
-                          Row(
+                    child: Card(
+                        shape: RoundedRectangleBorder( //<-- SEE HERE
+                          side: BorderSide(
+                            color: CustomColors.primaryContainer,
+                          ),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child:
+                        ListTile(
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                },
-                                icon: Icon( // <-- Icon
-                                  Icons.arrow_forward,
-                                  size: 24.0,
-                                ),
-                                label: Text('Visualizza'), // <-- Text
+                              Text('NOME:',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: CustomColors.primary
+                                ),),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                                child: Text(
+                                  scad.denominazioneProdotto!,
+                                  style:TextStyle(fontSize: 18, color: Colors.black),),
                               ),
-                              IconButton(
-                                  onPressed: (){
-                                    setState(() {
-                                      scad.inRimozione = true;
-                                    });
-                                  },
-                                  icon: Icon(Icons.delete)),
+                              Text('SCADUTO IL:',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: CustomColors.primary
+                                ),),
+                              Text(scad.data!.substring(0,10)),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                    },
+                                    icon: Icon( // <-- Icon
+                                      Icons.arrow_forward,
+                                      size: 24.0,
+                                    ),
+                                    label: Text('Visualizza'), // <-- Text
+                                  ),
+                                  IconButton(
+                                      onPressed: (){
+                                        setState(() {
+                                          scad.inRimozione = true;
+                                        });
+                                      },
+                                      icon: Icon(Icons.delete)),
+                                ],
+                              )
                             ],
-                          )
-                        ],
-                      ),
-                    )),
+                          ),
+                        )),
                   )).toList(),
             ),
           ),
-          Row(
-            children: [
-              Text('Promemoria'),
-              ElevatedButton.icon(
-                onPressed: () {
-                },
-                icon: Icon( // <-- Icon
-                  Icons.delete,
-                  size: 24.0,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0,25,0,0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16,0,0,0),
+                  child: Text('PROMEMORIA',
+                    style: TextStyle(
+                        fontSize: 28,
+                        color: CustomColors.primaryContainer
+                    ),),
                 ),
-                label: Text('Pulisci'), // <-- Text
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                    },
+                    icon: Icon( // <-- Icon
+                      Icons.delete,
+                      size: 24.0,
+                    ),
+                    label: Text('Pulisci'), // <-- Text
+                  ),
+                )
+              ],
+            ),
           ),
           Container(
-            height: 100,
+            height: 158,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: scadenze.map<Widget>(
-                      (scad) => Container(
+              children: listPromemoria.map<Widget>(
+                      (prom) => Container(
                     width: 250,
-                    child: Card(child:
-                    ListTile(
-                      title: Column(
-                        children: [
-                          Text(
-                            scad.denominazioneProdotto!,
-                            style:TextStyle(fontSize: 18, color: Colors.black),),
-                          Text(scad.data!),
-                          Row(
+                    child: Card(
+                        shape: RoundedRectangleBorder( //<-- SEE HERE
+                          side: BorderSide(
+                            color: CustomColors.primaryContainer,
+                          ),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: ListTile(
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                },
-                                icon: Icon( // <-- Icon
-                                  Icons.arrow_forward,
-                                  size: 24.0,
-                                ),
-                                label: Text('Visualizza'), // <-- Text
+                              Text('RICORDAMI DI:',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: CustomColors.primary
+                                ),),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                                child: Text(
+                                  prom.testo!,
+                                  style:TextStyle(fontSize: 18, color: Colors.black),),
                               ),
-                              IconButton(
-                                  onPressed: (){
-                                    setState(() {
-                                      scad.inRimozione = true;
-                                    });
-                                  },
-                                  icon: Icon(Icons.delete)),
+                              Text('QUANDO:',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: CustomColors.primary
+                                ),),
+                              Text(prom.data!.substring(0,10)),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                      onPressed: (){
+                                        setState(() {
+                                          prom.inRimozione = true;
+                                        });
+                                      },
+                                      icon: Icon(Icons.delete)),
+                                ],
+                              )
                             ],
-                          )
-                        ],
-                      ),
-                    )),
+                          ),
+                        )),
                   )).toList(),
             ),
           ),
           Expanded(
             child: Text(''),
           ),
-          SizedBox(
-            height: 50,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0,0,0,10),
             child: ElevatedButton.icon(
               onPressed: () {
               },
