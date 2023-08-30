@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:pantrysmart/Classes/Colors.dart';
 import 'package:pantrysmart/Classes/Prodotto.dart';
 import 'package:pantrysmart/Classes/Promemoria.dart';
 import 'package:pantrysmart/Classes/Scadenza.dart';
+import 'package:pantrysmart/LandingViewBloc/landing_view_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:core';
 
@@ -31,6 +33,7 @@ class HomeViewState extends State<HomeView> {
     final String? prodottiString = await prefs.getString('prodotti_key');
     final String? promemoriaString = await prefs.getString('promemoria_key');
     scadenze.clear();
+    await prefs.remove('prodottoSelezionato_key');
 
     var prodotti = Prodotto.decode(prodottiString!);
     for(var prodotto in prodotti){
@@ -60,6 +63,11 @@ class HomeViewState extends State<HomeView> {
       if(promemoriaString != null)
         listPromemoria = Promemoria.decode(promemoriaString!);
     });
+  }
+
+  Future<void> _salvaProdottoSelezionato(int prodottoId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('prodottoSelezionato_key', prodottoId.toString());
   }
 
   @override
@@ -141,15 +149,23 @@ class HomeViewState extends State<HomeView> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                    },
-                                    icon: Icon( // <-- Icon
-                                      Icons.arrow_forward,
-                                      size: 24.0,
-                                    ),
-                                    label: Text('Visualizza'), // <-- Text
-                                  ),
+                                  BlocConsumer<LandingViewBloc, LandingViewState>(
+                                      builder: (context, state){
+                                        return ElevatedButton.icon(
+                                          onPressed: () {
+                                            _salvaProdottoSelezionato(scad.idProdotto!);
+                                            BlocProvider.of<LandingViewBloc>(context).add(
+                                                TabChange(
+                                                    tabIndex: 1));
+                                          },
+                                          icon: Icon( // <-- Icon
+                                            Icons.arrow_forward,
+                                            size: 24.0,
+                                          ),
+                                          label: Text('Visualizza'), // <-- Text
+                                        );
+                                      },
+                                      listener: (context, state){}),
                                   IconButton(
                                       onPressed: (){
                                         setState(() {

@@ -16,6 +16,7 @@ List<Prodotto> prodottiFiltratiFinali = [];
 
 class ListaView extends StatefulWidget {
   ListaView({super.key});
+  String? tipoProdottoSelezionato;
   @override
   State<ListaView> createState() => ListaViewState();
 }
@@ -68,11 +69,28 @@ class ListaViewState extends State<ListaView> {
 
 
     final String? prodottiString = await prefs.getString('prodotti_key');
+    final String? prodottoSelezionatoString = await prefs.getString('prodottoSelezionato_key');
+    await prefs.remove('prodottoSelezionato_key');
+
     setState(() {
       prodotti = Prodotto.decode(prodottiString!);
-      prodottiFiltratiRicerca = prodotti;
-      prodottiFiltratiTipo = prodotti;
-      prodottiFiltratiFinali = prodotti;
+
+      if(prodottoSelezionatoString != null){
+        var prodottoId = int.tryParse(prodottoSelezionatoString);
+        var prodottoSelezionato = prodotti.firstWhere((element) => element.id == prodottoId);
+        prodottiFiltratiRicerca = [prodottoSelezionato];
+        prodottiFiltratiTipo = [prodottoSelezionato];
+        prodottiFiltratiFinali = [prodottoSelezionato];
+
+        fieldText.text = prodottoSelezionato.denominazione!;
+        widget.tipoProdottoSelezionato = prodottoSelezionato.tipo!;
+      }
+      else{
+        widget.tipoProdottoSelezionato = null;
+        prodottiFiltratiRicerca = prodotti;
+        prodottiFiltratiTipo = prodotti;
+        prodottiFiltratiFinali = prodotti;
+      }
     });
   }
 
@@ -201,6 +219,7 @@ class ListaViewState extends State<ListaView> {
                       notifyParent: applicaFiltroProdotti,
                       permettiQualsiasi: true,
                       filtroOperazioni: false,
+                      tipoIniziale: widget.tipoProdottoSelezionato,
                   ),
                 ),
               ],

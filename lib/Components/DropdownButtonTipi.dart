@@ -39,6 +39,24 @@ class _DropdownButtonTipiState extends State<DropdownButtonTipi> {
   }
 
   @override
+  void didUpdateWidget(DropdownButtonTipi oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.tipoIniziale != widget.tipoIniziale) {
+      this.updateChildWithParent(widget.tipoIniziale);
+    }
+  }
+
+
+  void updateChildWithParent(String? nuovoTipo) {
+    setState(() {
+      if(nuovoTipo != null)
+        dropdownValue = nuovoTipo!;
+      else
+        dropdownValue = list.first;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
       value: dropdownValue,
