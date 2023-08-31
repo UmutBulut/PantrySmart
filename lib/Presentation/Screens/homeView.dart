@@ -6,6 +6,7 @@ import 'package:pantrysmart/Classes/Prodotto.dart';
 import 'package:pantrysmart/Classes/Promemoria.dart';
 import 'package:pantrysmart/Classes/Scadenza.dart';
 import 'package:pantrysmart/LandingViewBloc/landing_view_bloc.dart';
+import 'package:pantrysmart/Presentation/Screens/promemoriaView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:core';
 
@@ -22,6 +23,7 @@ class HomeView extends StatefulWidget {
 }
 
 class HomeViewState extends State<HomeView> {
+  bool mostraTabPromemoria = false;
 
   @override
   void initState() {
@@ -61,10 +63,16 @@ class HomeViewState extends State<HomeView> {
         inRimozione: false
     ));
 
+    await _loadPromemoria();
+
     setState(() {
       if(promemoriaString != null)
         listPromemoria = Promemoria.decode(promemoriaString!);
     });
+  }
+
+  Future<void> _loadPromemoria() async {
+
   }
 
   Future<void> _salvaProdottoSelezionato(int prodottoId) async {
@@ -81,6 +89,7 @@ class HomeViewState extends State<HomeView> {
       await prefs.setString('prodotti_key', encodedData);
     }
   }
+
   Future<void> _disattivaNotificheTutte() async {
     final prefs = await SharedPreferences.getInstance();
     for(var scadenza in scadenze){
@@ -93,10 +102,29 @@ class HomeViewState extends State<HomeView> {
     await prefs.setString('prodotti_key', encodedData);
   }
 
+  void chiudiTabPromemoria(){
+    setState(() {
+      mostraTabPromemoria = false;
+    });
+  }
+
+  void apriTabPromemoria(){
+    setState(() {
+      mostraTabPromemoria = true;});
+  }
+
+  void chiudiTabPromemoriaEAggiorna(){
+    _loadPromemoria();
+    setState(() {
+      mostraTabPromemoria = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
+      child: (!mostraTabPromemoria) ?
+      Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(0,16,0,0),
@@ -400,6 +428,9 @@ class HomeViewState extends State<HomeView> {
             padding: const EdgeInsets.fromLTRB(0,0,0,10),
             child: ElevatedButton.icon(
               onPressed: () {
+                setState(() {
+                  mostraTabPromemoria = true;
+                });
               },
               icon: Icon( // <-- Icon
                 Icons.add,
@@ -413,7 +444,10 @@ class HomeViewState extends State<HomeView> {
             ),
           )
         ],
-      ),
+      ) :
+      PromemoriaView(title: 'Nuovo promemoria',
+          cancelFunction: chiudiTabPromemoria,
+          okFunction: chiudiTabPromemoriaEAggiorna),
     );
   }
 }

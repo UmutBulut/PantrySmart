@@ -26,7 +26,6 @@ class ListaViewState extends State<ListaView> {
   bool mostraTabProdotto = false;
   Prodotto? prodottoDaModificare;
 
-
   @override
   void initState() {
     super.initState();
