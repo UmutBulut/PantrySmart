@@ -91,7 +91,8 @@ class ProdottoViewState extends State<ProdottoView> {
           scadenza: widget.scadenza,
           quantita: widget.quantita,
           immagine: widget.immagine,
-          inRimozione: false);
+          inRimozione: false,
+          notificheDisattivate: widget.prodottoDaModificare!.notificheDisattivate);
 
       var vecchioProdotto =
       prodotti.firstWhere((element) => element.id == widget.prodottoDaModificare!.id);
@@ -124,7 +125,8 @@ class ProdottoViewState extends State<ProdottoView> {
           scadenza: widget.scadenza,
           quantita: widget.quantita,
           immagine: widget.immagine,
-          inRimozione: false
+          inRimozione: false,
+          notificheDisattivate: false
       );
       prodotti.add(nuovoProdotto);
 
@@ -348,7 +350,7 @@ class ProdottoViewState extends State<ProdottoView> {
                                           'Rimuovi'
                                       ), // <-- Text
                                     )
-                                    :
+                                        :
                                     ElevatedButton.icon(
                                       style: TextButton.
                                       styleFrom(backgroundColor: CustomColors.secondary),

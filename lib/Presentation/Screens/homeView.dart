@@ -17,6 +17,8 @@ class HomeView extends StatefulWidget {
   HomeView({super.key});
   @override
   State<HomeView> createState() => HomeViewState();
+  List<Prodotto> prodotti = [];
+  bool nuovaConferma = false;
 }
 
 class HomeViewState extends State<HomeView> {
@@ -35,14 +37,14 @@ class HomeViewState extends State<HomeView> {
     scadenze.clear();
     await prefs.remove('prodottoSelezionato_key');
 
-    var prodotti = Prodotto.decode(prodottiString!);
-    for(var prodotto in prodotti){
+    widget.prodotti = Prodotto.decode(prodottiString!);
+    for(var prodotto in widget.prodotti){
       var dataScadenza = DateTime.tryParse(prodotto.scadenza!);
       var giornoScadenza = dataScadenza!
           .copyWith(hour: 0, minute: 0, second: 0, microsecond: 0, millisecond: 0);
       var giornoOggi = oggi
           .copyWith(hour: 0, minute: 0, second: 0, microsecond: 0, millisecond: 0);
-      if(giornoOggi.isAfter(giornoScadenza)){
+      if(!prodotto.notificheDisattivate! && giornoOggi.isAfter(giornoScadenza)){
         Scadenza nuovaScadenza = Scadenza(
             idProdotto: prodotto.id,
             denominazioneProdotto: prodotto.denominazione,
@@ -68,6 +70,27 @@ class HomeViewState extends State<HomeView> {
   Future<void> _salvaProdottoSelezionato(int prodottoId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('prodottoSelezionato_key', prodottoId.toString());
+  }
+
+  Future<void> _disattivaNotificheProdotto(int prodottoId) async {
+    final prefs = await SharedPreferences.getInstance();
+    var prodotto = widget.prodotti.firstWhere((element) => element.id == prodottoId);
+    if(prodotto != null){
+      prodotto.notificheDisattivate = true;
+      var encodedData = Prodotto.encode(widget.prodotti);
+      await prefs.setString('prodotti_key', encodedData);
+    }
+  }
+  Future<void> _disattivaNotificheTutte() async {
+    final prefs = await SharedPreferences.getInstance();
+    for(var scadenza in scadenze){
+      var prodotto = widget.prodotti.firstWhere((element) => element.id == scadenza.idProdotto);
+      if(prodotto != null){
+        prodotto.notificheDisattivate = true;
+      }
+    }
+    var encodedData = Prodotto.encode(widget.prodotti);
+    await prefs.setString('prodotti_key', encodedData);
   }
 
   @override
@@ -98,8 +121,12 @@ class HomeViewState extends State<HomeView> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                    },
+                    onPressed: (scadenze.isNotEmpty)? () {
+                      setState(() {
+                        widget.nuovaConferma = true;
+                      });
+                    }:
+                    null,
                     icon: Icon( // <-- Icon
                       Icons.delete,
                       size: 24.0,
@@ -112,7 +139,8 @@ class HomeViewState extends State<HomeView> {
           ),
           Container(
             height: 158,
-            child: ListView(
+            child: (!widget.nuovaConferma)?
+            ListView(
               scrollDirection: Axis.horizontal,
               children: scadenze.map<Widget>(
                       (scad) => Container(
@@ -124,7 +152,7 @@ class HomeViewState extends State<HomeView> {
                           ),
                           borderRadius: BorderRadius.circular(20.0),
                         ),
-                        child:
+                        child: (!scad.inRimozione!)?
                         ListTile(
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,8 +205,111 @@ class HomeViewState extends State<HomeView> {
                               )
                             ],
                           ),
+                        )
+                            :
+                        ListTile(
+                          title: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Padding(
+                                padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                                child: Text('Attenzione, la notifica per l\'oggetto\n'
+                                    'non verrà più mostrata.\n'
+                                    'Confermare?',
+                                    style: TextStyle(
+                                        fontSize: 15
+                                    )),
+                              ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        setState(() {
+                                          scad.inRimozione = false;
+                                        });
+                                      },
+                                      icon: Icon( // <-- Icon
+                                        Icons.close,
+                                        size: 24.0,
+                                      ),
+                                      label: Text('No'), // <-- Text
+                                    ),
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        setState(() {
+                                          _disattivaNotificheProdotto(scad.idProdotto!);
+                                          scadenze.remove(scad);
+                                        });
+                                      },
+                                      icon: Icon( // <-- Icon
+                                        Icons.done,
+                                        size: 24.0,
+                                      ),
+                                      label: Text('Si'), // <-- Text
+                                    ),
+                                  ],
+                                )
+                              ]),
                         )),
                   )).toList(),
+            )
+            :
+            Card(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color: CustomColors.primaryContainer,
+                ),
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              child: Center(
+                child: ListTile(
+                  title: Padding(
+                    padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Attenzione, le notifiche elencate\n'
+                            'non verranno più mostrate.\n'
+                            'Confermare?',
+                            style: TextStyle(
+                                fontSize: 25
+                            )),
+                      ],
+                    ),
+                  ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            widget.nuovaConferma = false;
+                          });
+                        },
+                        icon: Icon( // <-- Icon
+                          Icons.close,
+                          size: 24.0,
+                        ),
+                        label: Text('No'), // <-- Text
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          await _disattivaNotificheTutte();
+                          setState(() {
+                            scadenze.clear();
+                            widget.nuovaConferma = false;
+                          });
+                        },
+                        icon: Icon( // <-- Icon
+                          Icons.done,
+                          size: 24.0,
+                        ),
+                        label: Text('Si'), // <-- Text
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
           Padding(

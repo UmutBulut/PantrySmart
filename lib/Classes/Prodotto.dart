@@ -9,6 +9,7 @@ class Prodotto {
   String? scadenza;
   String? immagine;
   bool? inRimozione;
+  bool? notificheDisattivate;
 
   Prodotto({
     this.id,
@@ -18,19 +19,21 @@ class Prodotto {
     this.quantita,
     this.scadenza,
     this.immagine,
-    this.inRimozione
+    this.inRimozione,
+    this.notificheDisattivate
   });
 
   factory Prodotto.fromJson(Map<String, dynamic> jsonData) {
     return Prodotto(
-      id: jsonData['id'],
-      denominazione: jsonData['denominazione'],
-      tipo: jsonData['tipo'],
-      prezzo: jsonData['prezzo'],
-      quantita: jsonData['quantita'],
-      scadenza: jsonData['scadenza'],
-      immagine: jsonData['immagine'],
-      inRimozione: jsonData['inRimozione']
+        id: jsonData['id'],
+        denominazione: jsonData['denominazione'],
+        tipo: jsonData['tipo'],
+        prezzo: jsonData['prezzo'],
+        quantita: jsonData['quantita'],
+        scadenza: jsonData['scadenza'],
+        immagine: jsonData['immagine'],
+        inRimozione: jsonData['inRimozione'],
+        notificheDisattivate: jsonData['notificheDisattivate']
     );
   }
 
@@ -43,6 +46,7 @@ class Prodotto {
     'scadenza': prodotto.scadenza,
     'immagine': prodotto.immagine,
     'inRimozione': prodotto.inRimozione,
+    'notificheDisattivate': prodotto.notificheDisattivate,
   };
 
   static String encode(List<Prodotto> prodotti) => json.encode(
