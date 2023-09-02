@@ -62,6 +62,8 @@ class HomeViewState extends State<HomeView> {
     setState(() {
       if(promemoriaString != null){
         listPromemoria = Promemoria.decode(promemoriaString);
+        listPromemoria.sort((a, b) =>
+            DateTime.parse(a.data!).compareTo(DateTime.parse(b.data!)));
       }
     });
   }
@@ -69,8 +71,11 @@ class HomeViewState extends State<HomeView> {
   Future<void> _loadPromemoria() async {
     final prefs = await SharedPreferences.getInstance();
     final String? promemoriaString = await prefs.getString('promemoria_key');
-    if(promemoriaString != null)
+    if(promemoriaString != null) {
       listPromemoria = Promemoria.decode(promemoriaString);
+      listPromemoria.sort((a, b) =>
+          DateTime.parse(a.data!).compareTo(DateTime.parse(b.data!)));
+    }
   }
 
   Future<void> _rimuoviPromemoria(Promemoria promemoria) async {
