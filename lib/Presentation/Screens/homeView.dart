@@ -36,6 +36,7 @@ class HomeViewState extends State<HomeView> {
 
     final String? prodottiString = await prefs.getString('prodotti_key');
     final String? promemoriaString = await prefs.getString('promemoria_key');
+
     scadenze.clear();
     await prefs.remove('prodottoSelezionato_key');
 
@@ -56,23 +57,19 @@ class HomeViewState extends State<HomeView> {
         scadenze.add(nuovaScadenza);
       }
     }
-    listPromemoria.add(Promemoria(
-        id: 74,
-        testo: "Test",
-        data: DateTime.now().add(Duration(days: 5)).toString(),
-        inRimozione: false
-    ));
-
-    await _loadPromemoria();
 
     setState(() {
-      if(promemoriaString != null)
-        listPromemoria = Promemoria.decode(promemoriaString!);
+      if(promemoriaString != null){
+        listPromemoria = Promemoria.decode(promemoriaString);
+      }
     });
   }
 
   Future<void> _loadPromemoria() async {
-
+    final prefs = await SharedPreferences.getInstance();
+    final String? promemoriaString = await prefs.getString('promemoria_key');
+    if(promemoriaString != null)
+      listPromemoria = Promemoria.decode(promemoriaString);
   }
 
   Future<void> _salvaProdottoSelezionato(int prodottoId) async {
@@ -237,7 +234,7 @@ class HomeViewState extends State<HomeView> {
                             :
                         ListTile(
                           title: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [Padding(
                                 padding: const EdgeInsets.fromLTRB(0,0,0,10),
                                 child: Text('Attenzione, la notifica per l\'oggetto\n'
@@ -281,7 +278,7 @@ class HomeViewState extends State<HomeView> {
                         )),
                   )).toList(),
             )
-            :
+                :
             Card(
               shape: RoundedRectangleBorder(
                 side: BorderSide(
@@ -368,6 +365,7 @@ class HomeViewState extends State<HomeView> {
               ],
             ),
           ),
+          (listPromemoria != null && listPromemoria.isNotEmpty)?
           Container(
             height: 158,
             child: ListView(
@@ -402,7 +400,7 @@ class HomeViewState extends State<HomeView> {
                                     fontSize: 20,
                                     color: CustomColors.primary
                                 ),),
-                              Text(prom.data!.substring(0,10)),
+                              Text(prom.data!.substring(0,16)),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -420,6 +418,10 @@ class HomeViewState extends State<HomeView> {
                         )),
                   )).toList(),
             ),
+          ) :
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Nessun promemoria da visualizzare.'),
           ),
           Expanded(
             child: Text(''),

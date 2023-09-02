@@ -29,7 +29,8 @@ class PromemoriaViewState extends State<PromemoriaView> {
   void initState() {
     super.initState();
     widget.testo = "";
-    widget.giorno = DateTime.now();
+    widget.giorno = DateTime.now()
+        .copyWith(hour: 0, minute: 0, second: 0, millisecond: 0,microsecond: 0);
     widget.ora = TimeOfDay.now().replacing(hour: TimeOfDay.now().hour +1);
 
     refreshAbilitaSalva();
@@ -49,26 +50,28 @@ class PromemoriaViewState extends State<PromemoriaView> {
     final prefs = await SharedPreferences.getInstance();
 
     final String? promemoriaString = await prefs.getString('promemoria_key');
-
-    var listaPromemoria = Promemoria.decode(promemoriaString!);
+    List<Promemoria> lista = [];
+    if(promemoriaString != null)
+      lista = Promemoria.decode(promemoriaString!);
 
     var nuovoId = 1;
-    if(listaPromemoria.isNotEmpty)
+    if(lista.isNotEmpty)
     {
-      var ultimoPromemoria = listaPromemoria.last;
+      var ultimoPromemoria = lista.last;
       nuovoId = ultimoPromemoria.id! +1;
     }
-//da sommare l'ora e il giorno scelti
+
     var nuovoPromemoria = Promemoria(
       id: nuovoId,
       testo: widget.testo,
-      data: widget.giorno.toString(),
+      data: widget.giorno!.add(Duration(hours: widget.ora!.hour, minutes: widget.ora!.minute)).toString(),
       inRimozione: false,
     );
-    listaPromemoria.add(nuovoPromemoria);
+    lista.add(nuovoPromemoria);
 
-    String encodedPromemoria = Promemoria.encode(listaPromemoria);
+    String encodedPromemoria = Promemoria.encode(lista);
     await prefs.setString('promemoria_key', encodedPromemoria);
+
     widget.okFunction();
   }
 
