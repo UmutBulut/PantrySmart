@@ -97,7 +97,7 @@ class ProdottoViewState extends State<ProdottoView> {
       var vecchioProdotto =
       prodotti.firstWhere((element) => element.id == widget.prodottoDaModificare!.id);
       prodotti.remove(vecchioProdotto);
-      prodotti.add(nuovoProdotto);
+      prodotti.insert(0,nuovoProdotto);
 
       var nuovaOperazione = DatoStorico(
           idProdotto: widget.prodottoDaModificare!.id,
@@ -128,7 +128,7 @@ class ProdottoViewState extends State<ProdottoView> {
           inRimozione: false,
           notificheDisattivate: false
       );
-      prodotti.add(nuovoProdotto);
+      prodotti.insert(0,nuovoProdotto);
 
       var nuovaOperazione = DatoStorico(
           idProdotto: nuovoId,
