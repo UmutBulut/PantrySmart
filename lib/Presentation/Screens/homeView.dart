@@ -19,7 +19,8 @@ class HomeView extends StatefulWidget {
   @override
   State<HomeView> createState() => HomeViewState();
   List<Prodotto> prodotti = [];
-  bool nuovaConferma = false;
+  bool nuovaConfermaScadenze = false;
+  bool nuovaConfermaPromemoria = false;
 }
 
 class HomeViewState extends State<HomeView> {
@@ -70,6 +71,20 @@ class HomeViewState extends State<HomeView> {
     final String? promemoriaString = await prefs.getString('promemoria_key');
     if(promemoriaString != null)
       listPromemoria = Promemoria.decode(promemoriaString);
+  }
+
+  Future<void> _rimuoviPromemoria(Promemoria promemoria) async {
+    final prefs = await SharedPreferences.getInstance();
+    listPromemoria.remove(promemoria);
+    String encodedPromemoria = Promemoria.encode(listPromemoria);
+    await prefs.setString('promemoria_key', encodedPromemoria);
+  }
+
+  Future<void> _rimuoviPromemoriaTutti() async {
+    final prefs = await SharedPreferences.getInstance();
+    listPromemoria.clear();
+    String encodedPromemoria = Promemoria.encode(listPromemoria);
+    await prefs.setString('promemoria_key', encodedPromemoria);
   }
 
   Future<void> _salvaProdottoSelezionato(int prodottoId) async {
@@ -148,7 +163,7 @@ class HomeViewState extends State<HomeView> {
                   child: ElevatedButton.icon(
                     onPressed: (scadenze.isNotEmpty)? () {
                       setState(() {
-                        widget.nuovaConferma = true;
+                        widget.nuovaConfermaScadenze = true;
                       });
                     }:
                     null,
@@ -164,7 +179,7 @@ class HomeViewState extends State<HomeView> {
           ),
           Container(
             height: 158,
-            child: (!widget.nuovaConferma)?
+            child: (!widget.nuovaConfermaScadenze)?
             ListView(
               scrollDirection: Axis.horizontal,
               children: scadenze.map<Widget>(
@@ -308,7 +323,7 @@ class HomeViewState extends State<HomeView> {
                       ElevatedButton.icon(
                         onPressed: () {
                           setState(() {
-                            widget.nuovaConferma = false;
+                            widget.nuovaConfermaScadenze = false;
                           });
                         },
                         icon: Icon( // <-- Icon
@@ -322,7 +337,7 @@ class HomeViewState extends State<HomeView> {
                           await _disattivaNotificheTutte();
                           setState(() {
                             scadenze.clear();
-                            widget.nuovaConferma = false;
+                            widget.nuovaConfermaScadenze = false;
                           });
                         },
                         icon: Icon( // <-- Icon
@@ -353,8 +368,12 @@ class HomeViewState extends State<HomeView> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                    },
+                    onPressed: (listPromemoria != null && listPromemoria.isNotEmpty)? () {
+                      setState(() {
+                        widget.nuovaConfermaPromemoria = true;
+                      });
+                    }:
+                    null,
                     icon: Icon( // <-- Icon
                       Icons.delete,
                       size: 24.0,
@@ -368,7 +387,8 @@ class HomeViewState extends State<HomeView> {
           (listPromemoria != null && listPromemoria.isNotEmpty)?
           Container(
             height: 158,
-            child: ListView(
+            child: (!widget.nuovaConfermaPromemoria)?
+            ListView(
               scrollDirection: Axis.horizontal,
               children: listPromemoria.map<Widget>(
                       (prom) => Container(
@@ -380,7 +400,8 @@ class HomeViewState extends State<HomeView> {
                           ),
                           borderRadius: BorderRadius.circular(20.0),
                         ),
-                        child: ListTile(
+                        child: (!prom.inRimozione!)?
+                        ListTile(
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -415,8 +436,105 @@ class HomeViewState extends State<HomeView> {
                               )
                             ],
                           ),
-                        )),
+                        ) :
+                        ListTile(
+                          title: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Padding(
+                                padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                                child: Text('Rimuovere il promemoria selezionato?',
+                                    style: TextStyle(
+                                        fontSize: 15
+                                    )),
+                              ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        setState(() {
+                                          prom.inRimozione = false;
+                                        });
+                                      },
+                                      icon: Icon( // <-- Icon
+                                        Icons.close,
+                                        size: 24.0,
+                                      ),
+                                      label: Text('No'), // <-- Text
+                                    ),
+                                    ElevatedButton.icon(
+                                      onPressed: () async {
+                                        await _rimuoviPromemoria(prom);
+                                        setState(() {
+                                        });
+                                      },
+                                      icon: Icon( // <-- Icon
+                                        Icons.done,
+                                        size: 24.0,
+                                      ),
+                                      label: Text('Si'), // <-- Text
+                                    ),
+                                  ],
+                                )
+                              ]),
+                        )
+                    ),
                   )).toList(),
+            ) :
+            Card(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color: CustomColors.primaryContainer,
+                ),
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              child: Center(
+                child: ListTile(
+                  title: Padding(
+                    padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Rimuovere tutti i\n'
+                            'promemoria elencati?',
+                            style: TextStyle(
+                                fontSize: 25
+                            )),
+                      ],
+                    ),
+                  ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            widget.nuovaConfermaPromemoria = false;
+                          });
+                        },
+                        icon: Icon( // <-- Icon
+                          Icons.close,
+                          size: 24.0,
+                        ),
+                        label: Text('No'), // <-- Text
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          await _rimuoviPromemoriaTutti();
+                          setState(() {
+                            widget.nuovaConfermaPromemoria = false;
+                          });
+                        },
+                        icon: Icon( // <-- Icon
+                          Icons.done,
+                          size: 24.0,
+                        ),
+                        label: Text('Si'), // <-- Text
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ) :
           Padding(
