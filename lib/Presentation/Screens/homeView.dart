@@ -423,8 +423,19 @@ class HomeViewState extends State<HomeView> {
                                 ),),
                               Text(prom.data!.substring(0,16)),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
+                                  (DateTime.tryParse(prom.data!)!.isAfter(DateTime.now()))?
+                                  Text('Attivo',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: CustomColors.primary
+                                    ),) :
+                                  Text('Scaduto',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: CustomColors.secondary
+                                    ),),
                                   IconButton(
                                       onPressed: (){
                                         setState(() {
