@@ -81,12 +81,21 @@ class _PantryDatePickerState extends State<PantryDatePicker>
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16,8,16,8),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              OutlinedButton(
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                ),
                 onPressed: () {
                   _restorableDatePickerRouteFuture.present();
                 },
-                child: Text(widget.buttonLabel),
+                icon: Icon( // <-- Icon
+                  Icons.calendar_month_sharp,
+                  size: 24.0,
+                ),
+                label: Text(
+                    widget.buttonLabel
+                ), // <-- Text
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16,0,0,0),

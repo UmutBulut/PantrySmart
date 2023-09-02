@@ -279,7 +279,7 @@ class ProdottoViewState extends State<ProdottoView> {
         SizedBox(
           height: 50,
           child: PantryDatePicker(
-            buttonLabel: 'Seleziona una data di Scadenza:',
+            buttonLabel: 'Seleziona una\ndata di Scadenza:',
             notifyParent: getSelectedDate,
             resettato: false,
             dateString: widget.scadenza!,

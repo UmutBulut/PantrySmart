@@ -110,7 +110,7 @@ class StoricoViewState extends State<StoricoView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                width: 223,
+                width: 255,
                 height: 50,
                 child: PantryDatePicker(
                   buttonLabel: 'Filtra\nper data:',
