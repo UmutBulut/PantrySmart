@@ -290,10 +290,26 @@ class ListaViewState extends State<ListaView> {
                                         onPressed: (prod.immagine != null)?() {
                                           showDialog(context: context, builder: (context) =>
                                               AlertDialog(
-                                                  title: Text('Foto'),
                                                   content: Image.memory(
                                                     base64Decode(prod.immagine!),
-                                                  ))
+                                                  ),
+                                                  actionsAlignment: MainAxisAlignment.end,
+                                                  actions: [
+                                                    ElevatedButton.icon(
+                                                      style: ButtonStyle(
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      icon: Icon( // <-- Icon
+                                                        Icons.close,
+                                                        size: 24.0,
+                                                      ),
+                                                      label: Text(
+                                                          'Chiudi'
+                                                      ), // <-- Text
+                                                    ),
+                                                  ])
                                           );
                                         } :
                                         null,
