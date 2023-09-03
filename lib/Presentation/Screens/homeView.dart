@@ -260,45 +260,48 @@ class HomeViewState extends State<HomeView> {
                             :
                         ListTile(
                           title: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Padding(
-                                padding: const EdgeInsets.fromLTRB(0,0,0,10),
-                                child: Text('Attenzione, la notifica per l\'oggetto\n'
-                                    'non verrà più mostrata.\n'
-                                    'Confermare?',
-                                    style: TextStyle(
-                                        fontSize: 15
-                                    )),
-                              ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        setState(() {
-                                          scad.inRimozione = false;
-                                        });
-                                      },
-                                      icon: Icon( // <-- Icon
-                                        Icons.close,
-                                        size: 24.0,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0,10,0,0),
+                                  child: Text('Attenzione!\nLa notifica per l\'oggetto non verrà più mostrata.\n'
+                                      'Confermare?',
+                                      style: TextStyle(
+                                          fontSize: 15
+                                      )),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        onPressed: () {
+                                          setState(() {
+                                            scad.inRimozione = false;
+                                          });
+                                        },
+                                        icon: Icon( // <-- Icon
+                                          Icons.close,
+                                          size: 24.0,
+                                        ),
+                                        label: Text('No'), // <-- Text
                                       ),
-                                      label: Text('No'), // <-- Text
-                                    ),
-                                    ElevatedButton.icon(
-                                      onPressed: () async {
-                                        await _disattivaNotificheProdotto(scad.idProdotto!);
-                                        setState(() {
-                                          scadenze.remove(scad);
-                                        });
-                                      },
-                                      icon: Icon( // <-- Icon
-                                        Icons.done,
-                                        size: 24.0,
+                                      ElevatedButton.icon(
+                                        onPressed: () async {
+                                          await _disattivaNotificheProdotto(scad.idProdotto!);
+                                          setState(() {
+                                            scadenze.remove(scad);
+                                          });
+                                        },
+                                        icon: Icon( // <-- Icon
+                                          Icons.done,
+                                          size: 24.0,
+                                        ),
+                                        label: Text('Si'), // <-- Text
                                       ),
-                                      label: Text('Si'), // <-- Text
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 )
                               ]),
                         )),
@@ -314,48 +317,50 @@ class HomeViewState extends State<HomeView> {
               ),
               child: Center(
                 child: ListTile(
-                  title: Padding(
-                    padding: const EdgeInsets.fromLTRB(0,0,0,10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Attenzione, le notifiche elencate\n'
-                            'non verranno più mostrate.\n'
-                            'Confermare?',
-                            style: TextStyle(
-                                fontSize: 25
-                            )),
-                      ],
-                    ),
-                  ),
-                  subtitle: Row(
+                  title: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            widget.nuovaConfermaScadenze = false;
-                          });
-                        },
-                        icon: Icon( // <-- Icon
-                          Icons.close,
-                          size: 24.0,
-                        ),
-                        label: Text('No'), // <-- Text
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0,10,0,0),
+                        child: Text('Attenzione!\nLe notifiche elencate non verranno più mostrate.\n'
+                            'Confermare?',
+                            style: TextStyle(
+                                fontSize: 18
+                            )),
                       ),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          await _disattivaNotificheTutte();
-                          setState(() {
-                            scadenze.clear();
-                            widget.nuovaConfermaScadenze = false;
-                          });
-                        },
-                        icon: Icon( // <-- Icon
-                          Icons.done,
-                          size: 24.0,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  widget.nuovaConfermaScadenze = false;
+                                });
+                              },
+                              icon: Icon( // <-- Icon
+                                Icons.close,
+                                size: 24.0,
+                              ),
+                              label: Text('No'), // <-- Text
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                await _disattivaNotificheTutte();
+                                setState(() {
+                                  scadenze.clear();
+                                  widget.nuovaConfermaScadenze = false;
+                                });
+                              },
+                              icon: Icon( // <-- Icon
+                                Icons.done,
+                                size: 24.0,
+                              ),
+                              label: Text('Si'), // <-- Text
+                            ),
+                          ],
                         ),
-                        label: Text('Si'), // <-- Text
                       ),
                     ],
                   ),
@@ -363,7 +368,7 @@ class HomeViewState extends State<HomeView> {
               ),
             ),
           )
-          :
+              :
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text('Nessuna scadenza da visualizzare.'),
@@ -469,42 +474,46 @@ class HomeViewState extends State<HomeView> {
                         ) :
                         ListTile(
                           title: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Padding(
-                                padding: const EdgeInsets.fromLTRB(0,0,0,10),
-                                child: Text('Rimuovere il promemoria selezionato?',
-                                    style: TextStyle(
-                                        fontSize: 15
-                                    )),
-                              ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        setState(() {
-                                          prom.inRimozione = false;
-                                        });
-                                      },
-                                      icon: Icon( // <-- Icon
-                                        Icons.close,
-                                        size: 24.0,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0,10,0,0),
+                                  child: Text('Rimuovere il promemoria selezionato?',
+                                      style: TextStyle(
+                                          fontSize: 15
+                                      )),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        onPressed: () {
+                                          setState(() {
+                                            prom.inRimozione = false;
+                                          });
+                                        },
+                                        icon: Icon( // <-- Icon
+                                          Icons.close,
+                                          size: 24.0,
+                                        ),
+                                        label: Text('No'), // <-- Text
                                       ),
-                                      label: Text('No'), // <-- Text
-                                    ),
-                                    ElevatedButton.icon(
-                                      onPressed: () async {
-                                        await _rimuoviPromemoria(prom);
-                                        setState(() {
-                                        });
-                                      },
-                                      icon: Icon( // <-- Icon
-                                        Icons.done,
-                                        size: 24.0,
+                                      ElevatedButton.icon(
+                                        onPressed: () async {
+                                          await _rimuoviPromemoria(prom);
+                                          setState(() {
+                                          });
+                                        },
+                                        icon: Icon( // <-- Icon
+                                          Icons.done,
+                                          size: 24.0,
+                                        ),
+                                        label: Text('Si'), // <-- Text
                                       ),
-                                      label: Text('Si'), // <-- Text
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 )
                               ]),
                         )
@@ -520,49 +529,56 @@ class HomeViewState extends State<HomeView> {
               ),
               child: Center(
                 child: ListTile(
-                  title: Padding(
-                    padding: const EdgeInsets.fromLTRB(0,0,0,10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Rimuovere tutti i\n'
-                            'promemoria elencati?',
-                            style: TextStyle(
-                                fontSize: 25
-                            )),
-                      ],
-                    ),
-                  ),
-                  subtitle: Row(
+                  title:
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            widget.nuovaConfermaPromemoria = false;
-                          });
-                        },
-                        icon: Icon( // <-- Icon
-                          Icons.close,
-                          size: 24.0,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0,20,0,0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Rimuovere tutti i promemoria elencati?',
+                                style: TextStyle(
+                                    fontSize: 18
+                                )),
+                          ],
                         ),
-                        label: Text('No'), // <-- Text
                       ),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          await _rimuoviPromemoriaTutti();
-                          setState(() {
-                            widget.nuovaConfermaPromemoria = false;
-                          });
-                        },
-                        icon: Icon( // <-- Icon
-                          Icons.done,
-                          size: 24.0,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  widget.nuovaConfermaPromemoria = false;
+                                });
+                              },
+                              icon: Icon( // <-- Icon
+                                Icons.close,
+                                size: 24.0,
+                              ),
+                              label: Text('No'), // <-- Text
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                await _rimuoviPromemoriaTutti();
+                                setState(() {
+                                  widget.nuovaConfermaPromemoria = false;
+                                });
+                              },
+                              icon: Icon( // <-- Icon
+                                Icons.done,
+                                size: 24.0,
+                              ),
+                              label: Text('Si'), // <-- Text
+                            ),
+                          ],
                         ),
-                        label: Text('Si'), // <-- Text
                       ),
-                    ],
-                  ),
+                    ],),
                 ),
               ),
             ),
