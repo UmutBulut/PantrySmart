@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Pantry Smart',
       theme: ThemeData.from(
       colorScheme: colorScheme,

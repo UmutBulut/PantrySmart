@@ -8,6 +8,8 @@ import 'package:pantrysmart/Classes/TipiIcone.dart';
 import 'package:pantrysmart/Classes/Colors.dart';
 import 'package:pantrysmart/Components/DatePicker.dart';
 import 'package:pantrysmart/Components/DropdownButtonTipi.dart';
+import 'package:pantrysmart/Presentation/Screens/listaView.dart';
+import 'package:pantrysmart/Presentation/Screens/storicoView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProdottoView extends StatefulWidget{
@@ -76,8 +78,12 @@ class ProdottoViewState extends State<ProdottoView> {
     final String? prodottiString = await prefs.getString('prodotti_key');
     final String? storicoString = await prefs.getString('storico_key');
 
-    var listaStorico = DatoStorico.decode(storicoString!);
-    var prodotti = Prodotto.decode(prodottiString!);
+    List<DatoStorico> listaStorico = [];
+    List<Prodotto> prodotti = [];
+    if(prodottiString != null)
+      prodotti = Prodotto.decode(prodottiString!);
+    if(storicoString != null)
+      listaStorico = DatoStorico.decode(storicoString!);
 
     prodotti.sort((a, b) => a.id!.compareTo(b.id!));
 

@@ -41,54 +41,30 @@ class ListaViewState extends State<ListaView> {
   Future<void> _loadprefs() async {
     final prefs = await SharedPreferences.getInstance();
 
-
-    /*String encodedData = '';
-    List<Prodotto> listaTest = [
-      Prodotto(
-          id:1,
-          denominazione: 'Formaggio',
-          tipo: 'Frigo/surgelati',
-          prezzo: '0.5',
-          quantita: '150g',
-          scadenza: DateTime.now().toString(),
-          immagine: null,
-          inRimozione: false),
-      Prodotto(
-          id:2,
-          denominazione: 'Vino',
-          tipo: 'Bevande',
-          prezzo: '7',
-          quantita: '1L',
-          scadenza: DateTime.now().toString(),
-          immagine: null,
-          inRimozione: false),
-    ];
-    encodedData = Prodotto.encode(listaTest);
-    await prefs.setString('prodotti_key', encodedData);*/
-
-
     final String? prodottiString = await prefs.getString('prodotti_key');
     final String? prodottoSelezionatoString = await prefs.getString('prodottoSelezionato_key');
     await prefs.remove('prodottoSelezionato_key');
 
     setState(() {
-      prodotti = Prodotto.decode(prodottiString!);
+      if(prodottiString != null){
+        prodotti = Prodotto.decode(prodottiString!);
 
-      if(prodottoSelezionatoString != null){
-        var prodottoId = int.tryParse(prodottoSelezionatoString);
-        var prodottoSelezionato = prodotti.firstWhere((element) => element.id == prodottoId);
-        prodottiFiltratiRicerca = [prodottoSelezionato];
-        prodottiFiltratiTipo = [prodottoSelezionato];
-        prodottiFiltratiFinali = [prodottoSelezionato];
+        if(prodottoSelezionatoString != null){
+          var prodottoId = int.tryParse(prodottoSelezionatoString);
+          var prodottoSelezionato = prodotti.firstWhere((element) => element.id == prodottoId);
+          prodottiFiltratiRicerca = [prodottoSelezionato];
+          prodottiFiltratiTipo = [prodottoSelezionato];
+          prodottiFiltratiFinali = [prodottoSelezionato];
 
-        fieldText.text = prodottoSelezionato.denominazione!;
-        widget.tipoProdottoSelezionato = prodottoSelezionato.tipo!;
-      }
-      else{
-        widget.tipoProdottoSelezionato = null;
-        prodottiFiltratiRicerca = prodotti;
-        prodottiFiltratiTipo = prodotti;
-        prodottiFiltratiFinali = prodotti;
+          fieldText.text = prodottoSelezionato.denominazione!;
+          widget.tipoProdottoSelezionato = prodottoSelezionato.tipo!;
+        }
+        else{
+          widget.tipoProdottoSelezionato = null;
+          prodottiFiltratiRicerca = prodotti;
+          prodottiFiltratiTipo = prodotti;
+          prodottiFiltratiFinali = prodotti;
+        }
       }
     });
   }
@@ -102,7 +78,11 @@ class ListaViewState extends State<ListaView> {
   Future<void> _saveStorico(int id, String denominazione) async {
     final prefs = await SharedPreferences.getInstance();
     final String? storicoString = await prefs.getString('storico_key');
-    var listaStorico = DatoStorico.decode(storicoString!);
+    List<DatoStorico> listaStorico = [];
+
+    if(storicoString != null)
+      listaStorico = DatoStorico.decode(storicoString!);
+
     var nuovaOperazione = DatoStorico(
         idProdotto: id,
         denominazioneProdotto: denominazione,
@@ -223,6 +203,7 @@ class ListaViewState extends State<ListaView> {
                 ),
               ],
             ),
+            (prodotti.isNotEmpty)?
             Expanded(
                 child:  Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -389,7 +370,11 @@ class ListaViewState extends State<ListaView> {
                         )).toList(),
                   ) :
                   Text('Nessun prodotto'),
-                )),
+                )) :
+            Expanded(child: Padding(
+              padding: const EdgeInsets.fromLTRB(8,16,8,8),
+              child: Text('Nessun prodotto da visualizzare.'),
+            )),
             Padding(
               padding: const EdgeInsets.fromLTRB(0,0,0,10),
               child: KeyboardVisibilityBuilder(

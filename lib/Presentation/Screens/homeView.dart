@@ -41,21 +41,23 @@ class HomeViewState extends State<HomeView> {
     scadenze.clear();
     await prefs.remove('prodottoSelezionato_key');
 
-    widget.prodotti = Prodotto.decode(prodottiString!);
-    for(var prodotto in widget.prodotti){
-      var dataScadenza = DateTime.tryParse(prodotto.scadenza!);
-      var giornoScadenza = dataScadenza!
-          .copyWith(hour: 0, minute: 0, second: 0, microsecond: 0, millisecond: 0);
-      var giornoOggi = oggi
-          .copyWith(hour: 0, minute: 0, second: 0, microsecond: 0, millisecond: 0);
-      if(!prodotto.notificheDisattivate! && giornoOggi.isAfter(giornoScadenza)){
-        Scadenza nuovaScadenza = Scadenza(
-            idProdotto: prodotto.id,
-            denominazioneProdotto: prodotto.denominazione,
-            data: prodotto.scadenza,
-            inRimozione: false
-        );
-        scadenze.add(nuovaScadenza);
+    if(prodottiString != null){
+      widget.prodotti = Prodotto.decode(prodottiString!);
+      for(var prodotto in widget.prodotti){
+        var dataScadenza = DateTime.tryParse(prodotto.scadenza!);
+        var giornoScadenza = dataScadenza!
+            .copyWith(hour: 0, minute: 0, second: 0, microsecond: 0, millisecond: 0);
+        var giornoOggi = oggi
+            .copyWith(hour: 0, minute: 0, second: 0, microsecond: 0, millisecond: 0);
+        if(!prodotto.notificheDisattivate! && giornoOggi.isAfter(giornoScadenza)){
+          Scadenza nuovaScadenza = Scadenza(
+              idProdotto: prodotto.id,
+              denominazioneProdotto: prodotto.denominazione,
+              data: prodotto.scadenza,
+              inRimozione: false
+          );
+          scadenze.add(nuovaScadenza);
+        }
       }
     }
 
@@ -182,6 +184,7 @@ class HomeViewState extends State<HomeView> {
               ],
             ),
           ),
+          (scadenze.isNotEmpty)?
           Container(
             height: 158,
             child: (!widget.nuovaConfermaScadenze)?
@@ -356,6 +359,11 @@ class HomeViewState extends State<HomeView> {
                 ),
               ),
             ),
+          )
+          :
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Nessuna scadenza da visualizzare.'),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(0,25,0,0),
@@ -389,7 +397,7 @@ class HomeViewState extends State<HomeView> {
               ],
             ),
           ),
-          (listPromemoria != null && listPromemoria.isNotEmpty)?
+          (listPromemoria.isNotEmpty)?
           Container(
             height: 158,
             child: (!widget.nuovaConfermaPromemoria)?

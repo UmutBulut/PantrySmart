@@ -34,27 +34,17 @@ class StoricoViewState extends State<StoricoView> {
   Future<void> _loadprefs() async {
     final prefs = await SharedPreferences.getInstance();
 
-    /*String encodedData = '';
-    List<DatoStorico> listaTest = [
-      DatoStorico(
-          idProdotto:74,
-          denominazioneProdotto: 'Formaggio',
-          tipoOperazione: 'Rimozione',
-          dataOperazione: DateTime.now().add(Duration(days:1)).toString(),
-          inRimozione: false)
-    ];
-    encodedData = DatoStorico.encode(listaTest);
-    await prefs.setString('storico_key', encodedData);*/
-
-
     final String? storicoString = await prefs.getString('storico_key');
-    setState(() {
-      listaStorico = DatoStorico.decode(storicoString!);
-      listaStoricoFiltrataData = listaStorico.where((element) =>
-      element.dataOperazione!.substring(0,10) == dataSelezionata!.substring(0,10)).toList();
-      applicaFiltroTipo('Qualsiasi');
 
-      aggiornaLista();
+    setState(() {
+      if(storicoString != null){
+        listaStorico = DatoStorico.decode(storicoString!);
+        listaStoricoFiltrataData = listaStorico.where((element) =>
+        element.dataOperazione!.substring(0,10) == dataSelezionata!.substring(0,10)).toList();
+        applicaFiltroTipo('Qualsiasi');
+
+        aggiornaLista();
+      }
     });
   }
 
@@ -153,6 +143,7 @@ class StoricoViewState extends State<StoricoView> {
             ],
           ),
         ),
+        (listaStorico.isNotEmpty)?
         Expanded(
             child: (!nuovaConferma)? Padding(
               padding: const EdgeInsets.all(8.0),
@@ -338,16 +329,20 @@ class StoricoViewState extends State<StoricoView> {
                 ),
               ),
             )
-        ),
+        ):
+        Expanded(child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Nessuna operazione da visualizzare.'),
+        )),
         Padding(
             padding: const EdgeInsets.fromLTRB(0,0,0,10),
             child: SizedBox(
               child: ElevatedButton.icon(
-                onPressed: (!nuovaConferma)? () {
+                onPressed: (!nuovaConferma && listaStorico.isNotEmpty)? () {
                   setState(() {
                     nuovaConferma = true;
                   });
-                }:
+                } :
                 null,
                 icon: Icon( // <-- Icon
                   Icons.delete,
