@@ -237,43 +237,47 @@ class StoricoViewState extends State<StoricoView> {
                         ),
                       ) :
                       ListTile(
-                        title: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(0,0,0,10),
-                              child: Text('Confermi la rimozione dell\'operazione?',
-                                  style: TextStyle(
-                                      fontSize: 20
-                                  )),
-                            )),
-                        subtitle: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                setState(() {
-                                  stor.inRimozione = false;
-                                });
-                              },
-                              icon: Icon( // <-- Icon
-                                Icons.close,
-                                size: 24.0,
+                          title: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0,10,0,10),
+                                child: Text('Confermi la rimozione dell\'operazione?',
+                                    style: TextStyle(
+                                        fontSize: 20
+                                    )),
                               ),
-                              label: Text('No'), // <-- Text
-                            ),
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                await _saveprefs(stor);
-                                setState(() {
-                                });
-                              },
-                              icon: Icon( // <-- Icon
-                                Icons.done,
-                                size: 24.0,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      setState(() {
+                                        stor.inRimozione = false;
+                                      });
+                                    },
+                                    icon: Icon( // <-- Icon
+                                      Icons.close,
+                                      size: 24.0,
+                                    ),
+                                    label: Text('No'), // <-- Text
+                                  ),
+                                  ElevatedButton.icon(
+                                    onPressed: () async {
+                                      await _saveprefs(stor);
+                                      setState(() {
+                                      });
+                                    },
+                                    icon: Icon( // <-- Icon
+                                      Icons.done,
+                                      size: 24.0,
+                                    ),
+                                    label: Text('Si'), // <-- Text
+                                  ),
+                                ],
                               ),
-                              label: Text('Si'), // <-- Text
-                            ),
-                          ],
-                        ),
+                            ],
+                          )
                       ),
                     )).toList(),
               ) :
@@ -289,52 +293,60 @@ class StoricoViewState extends State<StoricoView> {
               ),
               child: Center(
                 child: ListTile(
-                  title: Padding(
-                    padding: const EdgeInsets.fromLTRB(0,0,0,10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    title: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Confermi la rimozione\ndi tutte le operazioni?',
-                            style: TextStyle(
-                                fontSize: 20
-                            )),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0,100,0,0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Confermi la rimozione\ndi tutte le operazioni?',
+                                  style: TextStyle(
+                                      fontSize: 20
+                                  )),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    nuovaConferma = false;
+                                  });
+                                },
+                                icon: Icon( // <-- Icon
+                                  Icons.close,
+                                  size: 24.0,
+                                ),
+                                label: Text('No'), // <-- Text
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  await _saveprefs(null);
+                                  setState(() {
+                                    nuovaConferma = false;
+                                  });
+                                },
+                                icon: Icon( // <-- Icon
+                                  Icons.done,
+                                  size: 24.0,
+                                ),
+                                label: Text('Si'), // <-- Text
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
-                    ),
-                  ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            nuovaConferma = false;
-                          });
-                        },
-                        icon: Icon( // <-- Icon
-                          Icons.close,
-                          size: 24.0,
-                        ),
-                        label: Text('No'), // <-- Text
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          await _saveprefs(null);
-                          setState(() {
-                            nuovaConferma = false;
-                          });
-                        },
-                        icon: Icon( // <-- Icon
-                          Icons.done,
-                          size: 24.0,
-                        ),
-                        label: Text('Si'), // <-- Text
-                      ),
-                    ],
-                  ),
+                    )
                 ),
               ),
             )
-        ):
+        ) :
         Expanded(child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text('Nessuna operazione da visualizzare.'),
