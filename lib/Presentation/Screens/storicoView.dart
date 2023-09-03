@@ -164,7 +164,10 @@ class StoricoViewState extends State<StoricoView> {
                         side: BorderSide(
                           color: CustomColors.primaryContainer,
                         ),
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(10),
+                          bottom: Radius.circular(30),
+                        ),
                       ),
                       child: (!stor.inRimozione!)?
                       ListTile(
@@ -289,7 +292,10 @@ class StoricoViewState extends State<StoricoView> {
                 side: BorderSide(
                   color: CustomColors.primaryContainer,
                 ),
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(10),
+                  bottom: Radius.circular(30),
+                ),
               ),
               child: Center(
                 child: ListTile(

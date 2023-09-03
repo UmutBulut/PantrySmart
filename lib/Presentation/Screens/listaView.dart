@@ -217,7 +217,10 @@ class ListaViewState extends State<ListaView> {
                             side: BorderSide(
                               color: CustomColors.primaryContainer,
                             ),
-                            borderRadius: BorderRadius.circular(20.0),
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(10),
+                              bottom: Radius.circular(30),
+                            ),
                           ),
                           child: (!prod.inRimozione!)?
                           ListTile(
@@ -265,7 +268,7 @@ class ListaViewState extends State<ListaView> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(0,10,0,0),
+                                  padding: const EdgeInsets.fromLTRB(0,10,0,3),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [

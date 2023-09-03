@@ -198,7 +198,10 @@ class HomeViewState extends State<HomeView> {
                           side: BorderSide(
                             color: CustomColors.primaryContainer,
                           ),
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.horizontal(
+                            left: Radius.circular(15),
+                            right: Radius.circular(30),
+                          )
                         ),
                         child: (!scad.inRimozione!)?
                         ListTile(
@@ -313,7 +316,10 @@ class HomeViewState extends State<HomeView> {
                 side: BorderSide(
                   color: CustomColors.primaryContainer,
                 ),
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.horizontal(
+                  left: Radius.circular(15),
+                  right: Radius.circular(30),
+                )
               ),
               child: Center(
                 child: ListTile(
@@ -419,7 +425,10 @@ class HomeViewState extends State<HomeView> {
                           side: BorderSide(
                             color: CustomColors.primaryContainer,
                           ),
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.horizontal(
+                            left: Radius.circular(15),
+                            right: Radius.circular(30),
+                          )
                         ),
                         child: (!prom.inRimozione!)?
                         ListTile(
@@ -525,7 +534,10 @@ class HomeViewState extends State<HomeView> {
                 side: BorderSide(
                   color: CustomColors.primaryContainer,
                 ),
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.horizontal(
+                  left: Radius.circular(15),
+                  right: Radius.circular(30),
+                )
               ),
               child: Center(
                 child: ListTile(
