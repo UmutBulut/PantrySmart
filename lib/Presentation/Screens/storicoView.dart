@@ -177,7 +177,7 @@ class StoricoViewState extends State<StoricoView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.fromLTRB(8,16,8,8),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [

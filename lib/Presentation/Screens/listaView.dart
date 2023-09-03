@@ -222,7 +222,7 @@ class ListaViewState extends State<ListaView> {
                           child: (!prod.inRimozione!)?
                           ListTile(
                             title: Padding(
-                              padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                              padding: const EdgeInsets.fromLTRB(0,10,0,10),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [

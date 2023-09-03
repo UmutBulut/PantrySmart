@@ -186,7 +186,7 @@ class HomeViewState extends State<HomeView> {
           ),
           (scadenze.isNotEmpty)?
           Container(
-            height: 158,
+            height: 168,
             child: (!widget.nuovaConfermaScadenze)?
             ListView(
               scrollDirection: Axis.horizontal,
@@ -205,11 +205,14 @@ class HomeViewState extends State<HomeView> {
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('NOME:',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: CustomColors.primary
-                                ),),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0,10,0,0),
+                                child: Text('NOME:',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: CustomColors.primary
+                                  ),),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(0,0,0,10),
                                 child: Text(
@@ -399,7 +402,7 @@ class HomeViewState extends State<HomeView> {
           ),
           (listPromemoria.isNotEmpty)?
           Container(
-            height: 158,
+            height: 168,
             child: (!widget.nuovaConfermaPromemoria)?
             ListView(
               scrollDirection: Axis.horizontal,
@@ -418,11 +421,14 @@ class HomeViewState extends State<HomeView> {
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('RICORDAMI DI:',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: CustomColors.primary
-                                ),),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0,10,0,0),
+                                child: Text('RICORDAMI DI:',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: CustomColors.primary
+                                  ),),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(0,0,0,10),
                                 child: Text(
