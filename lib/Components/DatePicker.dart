@@ -100,7 +100,10 @@ class _PantryDatePickerState extends State<PantryDatePicker>
               Padding(
                 padding: const EdgeInsets.fromLTRB(16,0,0,0),
                 child: (!widget.resettato)?
-                Text(_selectedDate.value.toString().substring(0,10)):
+                Text(_selectedDate.value.toString().substring(0,10),
+                style: TextStyle(
+                  fontSize: 17,
+                ),):
                 Text('Nessuna data\nselezionata.'),
               ),
             ],

@@ -134,9 +134,10 @@ class PromemoriaViewState extends State<PromemoriaView> {
           ),),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16,0,0,0),
+          padding: const EdgeInsets.fromLTRB(16,10,0,0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton.icon(
                 style: ButtonStyle(
@@ -161,7 +162,13 @@ class PromemoriaViewState extends State<PromemoriaView> {
                     'Seleziona un orario'
                 ), // <-- Text
               ),
-              Text(widget.oraString!)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 18, 0),
+                child: Text(widget.oraString!,
+                style: TextStyle(
+                  fontSize: 17
+                ),),
+              )
             ],
           ),
         ),

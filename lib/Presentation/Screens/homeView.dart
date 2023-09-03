@@ -611,7 +611,7 @@ class HomeViewState extends State<HomeView> {
           )
         ],
       ) :
-      PromemoriaView(title: 'Nuovo promemoria',
+      PromemoriaView(title: 'Crea un nuovo Promemoria!',
           cancelFunction: chiudiTabPromemoria,
           okFunction: chiudiTabPromemoriaEAggiorna),
     );
