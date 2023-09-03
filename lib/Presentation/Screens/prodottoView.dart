@@ -155,11 +155,13 @@ class ProdottoViewState extends State<ProdottoView> {
 
   Future<void> getImage() async {
     widget.image = await widget.imagePicker.pickImage(source: ImageSource.camera);
-    var byteImage = await widget.image!.readAsBytes();
-    String base64Image = base64Encode(byteImage);
-    setState(() {
-      widget.immagine = base64Image;
-    });
+    if(widget.image != null){
+      var byteImage = await widget.image!.readAsBytes();
+      String base64Image = base64Encode(byteImage);
+      setState(() {
+        widget.immagine = base64Image;
+      });
+    }
   }
 
   void getSelectedDate(DateTime res) {
@@ -301,8 +303,8 @@ class ProdottoViewState extends State<ProdottoView> {
                   ElevatedButton.icon(
                     style: ButtonStyle(
                     ),
-                    onPressed: () async {
-                      await getImage();
+                    onPressed: () {
+                      getImage();
                     },
                     icon: Icon( // <-- Icon
                       Icons.camera,
