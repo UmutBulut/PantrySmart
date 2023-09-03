@@ -330,7 +330,7 @@ class ListaViewState extends State<ListaView> {
                           ListTile(
                             title: Center(
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(0,0,0,10),
+                                  padding: const EdgeInsets.fromLTRB(0,10,0,10),
                                   child: Text('Confermi la rimozione dell\'oggetto?',
                                       style: TextStyle(
                                           fontSize: 20
