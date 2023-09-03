@@ -69,8 +69,10 @@ class ListaViewState extends State<ListaView> {
     });
   }
 
-  Future<void> _saveProdotti() async {
+  Future<void> _saveProdotti(Prodotto prodotto) async {
     final prefs = await SharedPreferences.getInstance();
+    prodottiFiltratiFinali.remove(prodotto);
+    prodotti.remove(prodotto);
     var encodedData = Prodotto.encode(prodotti);
     await prefs.setString('prodotti_key', encodedData);
   }
@@ -268,8 +270,8 @@ class ListaViewState extends State<ListaView> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       ElevatedButton.icon(
-                                        onPressed: (prod.immagine != null)?() {
-                                          showDialog(context: context, builder: (context) =>
+                                        onPressed: (prod.immagine != null)?() async {
+                                          await showDialog(context: context, builder: (context) =>
                                               AlertDialog(
                                                   content: Image.memory(
                                                     base64Decode(prod.immagine!),
@@ -350,12 +352,10 @@ class ListaViewState extends State<ListaView> {
                                   label: Text('No'), // <-- Text
                                 ),
                                 ElevatedButton.icon(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await _saveProdotti(prod);
+                                    await _saveStorico(prod.id!, prod.denominazione!);
                                     setState(() {
-                                      prodottiFiltratiFinali.remove(prod);
-                                      prodotti.remove(prod);
-                                      _saveProdotti();
-                                      _saveStorico(prod.id!, prod.denominazione!);
                                     });
                                   },
                                   icon: Icon( // <-- Icon

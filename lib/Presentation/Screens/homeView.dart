@@ -228,8 +228,8 @@ class HomeViewState extends State<HomeView> {
                                   BlocConsumer<LandingViewBloc, LandingViewState>(
                                       builder: (context, state){
                                         return ElevatedButton.icon(
-                                          onPressed: () {
-                                            _salvaProdottoSelezionato(scad.idProdotto!);
+                                          onPressed: () async {
+                                            await _salvaProdottoSelezionato(scad.idProdotto!);
                                             BlocProvider.of<LandingViewBloc>(context).add(
                                                 TabChange(
                                                     tabIndex: 1));
@@ -283,9 +283,9 @@ class HomeViewState extends State<HomeView> {
                                       label: Text('No'), // <-- Text
                                     ),
                                     ElevatedButton.icon(
-                                      onPressed: () {
+                                      onPressed: () async {
+                                        await _disattivaNotificheProdotto(scad.idProdotto!);
                                         setState(() {
-                                          _disattivaNotificheProdotto(scad.idProdotto!);
                                           scadenze.remove(scad);
                                         });
                                       },

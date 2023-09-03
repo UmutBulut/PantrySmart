@@ -195,9 +195,9 @@ class PromemoriaViewState extends State<PromemoriaView> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(8,8,16,8),
                           child: ElevatedButton.icon(
-                            onPressed: widget.abilitaSalva? () {
+                            onPressed: widget.abilitaSalva? () async {
+                              await _saveChanges();
                               setState(() {
-                                _saveChanges();
                                 widget.okFunction();
                               });
                             } :

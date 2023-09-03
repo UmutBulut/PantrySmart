@@ -48,8 +48,17 @@ class StoricoViewState extends State<StoricoView> {
     });
   }
 
-  Future<void> _saveprefs() async {
+  Future<void> _saveprefs(DatoStorico? storico) async {
     final prefs = await SharedPreferences.getInstance();
+    if(storico != null){
+      listaStorico.remove(storico);
+      listaStoricoFiltrataFinale.remove(storico);
+    }
+    else{
+      listaStorico.clear();
+      listaStoricoFiltrataFinale.clear();
+    }
+
     String encodedData = DatoStorico.encode(listaStorico);
     await prefs.setString('storico_key', encodedData);
   }
@@ -252,11 +261,9 @@ class StoricoViewState extends State<StoricoView> {
                               label: Text('No'), // <-- Text
                             ),
                             ElevatedButton.icon(
-                              onPressed: () {
+                              onPressed: () async {
+                                await _saveprefs(stor);
                                 setState(() {
-                                  listaStorico.remove(stor);
-                                  listaStoricoFiltrataFinale.remove(stor);
-                                  _saveprefs();
                                 });
                               },
                               icon: Icon( // <-- Icon
@@ -310,11 +317,9 @@ class StoricoViewState extends State<StoricoView> {
                         label: Text('No'), // <-- Text
                       ),
                       ElevatedButton.icon(
-                        onPressed: () {
+                        onPressed: () async {
+                          await _saveprefs(null);
                           setState(() {
-                            listaStorico.clear();
-                            listaStoricoFiltrataFinale.clear();
-                            _saveprefs();
                             nuovaConferma = false;
                           });
                         },

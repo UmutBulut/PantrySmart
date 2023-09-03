@@ -301,8 +301,8 @@ class ProdottoViewState extends State<ProdottoView> {
                   ElevatedButton.icon(
                     style: ButtonStyle(
                     ),
-                    onPressed: () {
-                      getImage();
+                    onPressed: () async {
+                      await getImage();
                     },
                     icon: Icon( // <-- Icon
                       Icons.camera,
@@ -314,7 +314,7 @@ class ProdottoViewState extends State<ProdottoView> {
                   ),
                   ElevatedButton.icon(
                     onPressed: (widget.immagine != null)?() async {
-                      showDialog(
+                      await showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return StatefulBuilder(builder: (context, setState) {
@@ -415,9 +415,9 @@ class ProdottoViewState extends State<ProdottoView> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(8,8,16,8),
                           child: ElevatedButton.icon(
-                            onPressed: widget.abilitaSalva? () {
+                            onPressed: widget.abilitaSalva? () async {
+                              await _saveChanges();
                               setState(() {
-                                _saveChanges();
                                 widget.okFunction();
                               });
                             } :
